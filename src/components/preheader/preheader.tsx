@@ -1,0 +1,131 @@
+'use client'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ImageIcon, Mail, MapPin, X } from 'lucide-react'
+import { useState } from 'react'
+import { LanguageSwitcher } from '../language-switcher/language-switcher'
+import { ModeToggle } from '../mode-toggle/mode-toggle'
+import { Button } from '../ui/button'
+import { SidebarTrigger } from '../ui/sidebar'
+
+const Preheader = () => {
+    const [isOpen, setIsOpen] = useState(false)
+    const [showMap, setShowMap] = useState(false)
+
+    return (
+        <div className="hidden md:block py-4 relative">
+            <div className="container-cs flex justify-between items-center">
+                <SidebarTrigger />
+                <div
+                    className="relative"
+                    onMouseEnter={() => setShowMap(true)}
+                    onMouseLeave={() => setShowMap(false)}
+                >
+                    <h1 className="flex justify-center items-center gap-2 cursor-pointer hover:text-primary transition-colors">
+                        <MapPin size={16} />
+                        O'zbekiston, Samarqand shahar, Ko'ksaroy maydoni 4A-uy, 104157
+                    </h1>
+
+                    <AnimatePresence>
+                        {showMap && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                                transition={{ duration: 0.5, ease: "easeInOut" }}
+                                className="absolute top-full left-0 mt-4 z-[100] w-[400px] h-[300px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800"
+                            >
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    frameBorder="0"
+                                    src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3071.936630453303!2d66.96326291211158!3d39.657145971452585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMznCsDM5JzI1LjciTiA2NsKwNTcnNTUuNiJF!5e0!3m2!1sen!2s!4v1710000000000!5m2!1sen!2s"
+                                    allowFullScreen
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+                <h1 className="flex justify-center items-center gap-2">
+                    <Mail size={16} /> info@saminvest.uz
+                </h1>
+                <div className="flex gap-2">
+                    <LanguageSwitcher />
+                    <ModeToggle />
+                    <Button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className=""
+                        variant="ghost"
+                    >
+                        Maxsus imkoniyatlar
+                    </Button>
+                </div>
+            </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.6, ease: "easeInOut" }}
+                        className="absolute top-full left-0 z-55 bg-[#0A0A3D] text-white w-full py-4 border-t border-white/10"
+                    >
+                        <div className="container-cs flex items-center justify-between">
+                            <div className="flex items-center gap-8">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm">
+                                        Shrift o‘lchami:
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <button className="bg-white text-black px-3 py-1 rounded text-xs">
+                                            Aa
+                                        </button>
+                                        <button className="bg-white text-black px-3 py-1 rounded text-sm">
+                                            Aa
+                                        </button>
+                                        <button className="bg-white text-black px-3 py-1 rounded text-base font-bold">
+                                            Aa
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 border-l border-white/20 pl-8">
+                                    <span className="text-sm">
+                                        Rang sxemasi:
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <button className="bg-white text-black px-3 py-1 rounded font-bold">
+                                            Aa
+                                        </button>
+                                        <button className="bg-black text-white px-3 py-1 rounded border border-white font-bold">
+                                            Aa
+                                        </button>
+                                        <button className="bg-[#EAB308] text-white px-3 py-1 rounded font-bold">
+                                            Aa
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 border-l border-white/20 pl-8">
+                                    <span className="text-sm">Tasvirlar:</span>
+                                    <div className="flex gap-2">
+                                        <button className="bg-white text-black p-1 rounded">
+                                            <ImageIcon size={20} />
+                                        </button>
+                                        <button className="bg-[#EAB308] text-white p-1 rounded">
+                                            <ImageIcon size={20} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    )
+}
+export default Preheader

@@ -1,0 +1,123 @@
+'use client'
+import React from 'react'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { Phone, Mail, MessageSquare, Facebook, Instagram, Youtube, Send } from 'lucide-react'
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+} from '@/components/ui/sidebar'
+import logo from '../../../public/logo.png'
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+    }
+}
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 }
+}
+
+export function AppSidebar() {
+    return (
+        <Sidebar className="border-r-0">
+            <SidebarHeader className="bg-[#0A0A3D] pt-12 pb-6 px-6 border-b border-white/10">
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex flex-col items-center gap-4"
+                >
+                    <div className="relative p-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
+                        <Image src={logo} alt="Logo" width={80} height={80} className="object-contain" />
+                    </div>
+                    <h1 className="text-sm font-bold text-white text-center leading-tight tracking-wide uppercase">
+                        Samarqand Viloyati <br/>
+                        <span className="text-blue-400 font-medium normal-case block mt-1 opacity-80">
+                            Investitsiyalar, sanoat va savdo boshqarmasi
+                        </span>
+                    </h1>
+                </motion.div>
+            </SidebarHeader>
+
+            <SidebarContent className="bg-[#0A0A3D] px-4 py-8 overflow-y-auto no-scrollbar">
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    className="space-y-6"
+                >
+                    <ContactCard
+                        icon={<Phone size={18} className="text-blue-400" />}
+                        label="Ishonch telefoni"
+                        value="+998 (66) 230-48-51"
+                    />
+                    <ContactCard
+                        icon={<MessageSquare size={18} className="text-emerald-400" />}
+                        label="Devonxona"
+                        value="+998 (66) 230-48-44"
+                    />
+                    <div className="pt-2">
+                        <ContactCard
+                            icon={<Mail size={18} className="text-amber-400" />}
+                            label="Korporativ pochta"
+                            value={["saminvestcom@gmail.com", "samvil.invest@exat.uz"]}
+                        />
+                    </div>
+                </motion.div>
+            </SidebarContent>
+
+            <SidebarFooter className="bg-[#0A0A3D] pb-10 px-6 border-t border-white/5">
+                <p className="text-[10px] text-white/40 uppercase tracking-[2px] text-center mb-4">Ijtimoiy tarmoqlar</p>
+                <div className="flex justify-center gap-3">
+                    <SocialIcon icon={<Send size={18} />} color="hover:bg-sky-500" />
+                    <SocialIcon icon={<Facebook size={18} />} color="hover:bg-blue-600" />
+                    <SocialIcon icon={<Instagram size={18} />} color="hover:bg-pink-600" />
+                    <SocialIcon icon={<Youtube size={18} />} color="hover:bg-red-600" />
+                </div>
+            </SidebarFooter>
+        </Sidebar>
+    )
+}
+
+function ContactCard({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | string[] }) {
+    return (
+        <motion.div
+            variants={itemVariants}
+            whileHover={{ x: 5 }}
+            className="group flex flex-col gap-1 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-default"
+        >
+            <div className="flex items-center gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                {icon}
+                <span className="text-[11px] font-semibold text-white/70 uppercase tracking-wider">{label}</span>
+            </div>
+            <div className="pl-8">
+                {Array.isArray(value) ? (
+                    value.map((v, i) => (
+                        <p key={i} className="text-sm text-white font-medium break-all mb-1 last:mb-0">{v}</p>
+                    ))
+                ) : (
+                    <p className="text-sm text-white font-medium">{value}</p>
+                )}
+            </div>
+        </motion.div>
+    )
+}
+
+function SocialIcon({ icon, color }: { icon: React.ReactNode, color: string }) {
+    return (
+        <motion.a
+            href="#"
+            whileHover={{ y: -4, scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className={`w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white transition-all ${color}`}
+        >
+            {icon}
+        </motion.a>
+    )
+}
