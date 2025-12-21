@@ -1,21 +1,10 @@
 'use client'
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import placeholderImage from '../../../../public/image.png'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -28,10 +17,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { api } from '@/models/axios'
+import { Input } from '@/components/ui/input'
+import { api, baseBackendUrl } from '@/models/axios'
 import { DialogDescription } from '@radix-ui/react-dialog'
-import { useMutation } from '@tanstack/react-query'
-import { Upload, X } from 'lucide-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import Cookies from 'js-cookie'
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Upload,
+  X,
+} from 'lucide-react'
 import {
   A11y,
   Autoplay,
@@ -39,58 +37,50 @@ import {
   Pagination as SwiperPagination,
 } from 'swiper/modules'
 
-const photoData: Record<string, any>[] = [
-  {
-    id: 1,
-    alt: 'Gallery 1',
-    images: ['/image1.jpg', '/image2.jpg', '/image3.jpg'],
-  },
-  {
-    id: 2,
-    alt: 'Gallery 2',
-    images: Array.from({ length: 25 }).map((_, i) => `/image${i + 1}.jpg`),
-  },
-  {
-    id: 3,
-    alt: 'Gallery 3',
-    images: ['/image3.jpg', '/image2.jpg'],
-  },
-  ...Array.from({ length: 8 }).map((_, i) => ({
-    id: i + 4,
-    alt: `Gallery ${i + 4}`,
-    images: ['/image1.jpg', '/image2.jpg'],
-  })),
-]
-
-const Galereya = () => {
-  const [open, setOpen] = useState<boolean>(false)
-  const [files, setFiles] = useState<FileList | null>(null)
-
-  const [selectedGallery, setSelectedGallery] = useState<
-    (typeof photoData)[0] | null
-  >(null)
-  const totalCards = photoData.length
-  const cardsPerPage = 12
-  const totalPages = Math.ceil(totalCards / cardsPerPage)
-  const [currentPage, setCurrentPage] = useState(1)
-
-  const startIndex = (currentPage - 1) * cardsPerPage
-  const currentCards = useMemo(
-    () =>
-      photoData.slice(
-        (currentPage - 1) * cardsPerPage,
-        currentPage * cardsPerPage
-      ),
-    [currentPage, photoData]
-  )
-
+const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
   const t = useTranslations()
+  const [activeTab, setActiveTab] = useState<'rasmlar' | 'videolar'>(
+    tab || 'rasmlar'
+  )
+  const [open, setOpen] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(12)
+  const [sort, setSort] = useState<'asc' | 'desc'>('asc')
+  const [files, setFiles] = useState<File[]>([])
+  const [selectedGallery, setSelectedGallery] = useState<Record<
+    string,
+    any
+  > | null>(null)
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page)
-    }
-  }
+  const images = useQuery({
+    enabled: activeTab === 'rasmlar',
+    queryKey: ['images'],
+    queryFn: async () => {
+      const response = await api.get('/gallery-item/images', {
+        params: {
+          page,
+          pageSize,
+          sort,
+        },
+      })
+      return response.data
+    },
+  })
+  const videos = useQuery({
+    enabled: activeTab === 'videolar',
+    queryKey: ['videos'],
+    queryFn: async () => {
+      const response = await api.get('/gallery-item/videos', {
+        params: {
+          page,
+          pageSize,
+          sort,
+        },
+      })
+      return response.data
+    },
+  })
+
   const createGalereyaPhoto = useMutation({
     mutationFn: async () => {
       if (!files || files.length === 0) {
@@ -98,49 +88,64 @@ const Galereya = () => {
       }
 
       const formData = new FormData()
-      console.log(files)
 
-      Array.from(files).forEach((file) => {
+      // 👇 backendda field name 'files' bo‘lishi kerak
+      files.forEach((file) => {
         formData.append('files', file)
       })
 
-      formData.append('type', 'PHOTO')
+      formData.append('type', 'IMAGE')
 
-      // ❌ Qo‘lda Content-Type bermang, axios avtomatik belgilaydi
-      const response = await api.post('/gallery-item', formData)
+      const response = await api.post('/gallery-item', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
       return response.data
     },
 
     onSuccess: () => {
       setOpen(false)
-      setFiles(null)
+      setFiles([])
     },
   })
+
+  const totalPages = Math.ceil(images.data?.total / pageSize)
+  console.log(totalPages)
 
   return (
     <div className="container-cs py-5 mb-5">
       <div>
         <div className="flex justify-between items-center mb-8">
           <div className="inline-flex rounded-lg bg-gray-100 dark:bg-[#0A0A3D] p-1">
-            {[
-              { label: t('Rasmlar'), href: '/galereya/rasmlar' },
-              {
-                label: t('Videolar'),
-                href: '/galereya/videolar',
-              },
-            ].map((tab) => (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className={`px-6 py-3 text-sm font-medium rounded-md transition-colors ${
-                  tab.href === '/galereya/rasmlar'
-                    ? 'bg-white dark:bg-[#372AAC] dark:text-white text-[#2B2B7A] shadow-sm'
-                    : 'text-gray-700 dark:text-white hover:text-gray-900'
-                }`}
-              >
-                {tab.label}
-              </Link>
-            ))}
+            <button
+              onClick={() => {
+                setActiveTab('rasmlar')
+                Cookies.set('admin-gallery-tab', 'rasmlar')
+                setPage(1)
+                setSort('asc')
+              }}
+              className={`px-6 py-3 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'rasmlar'
+                  ? 'bg-white dark:bg-[#372AAC] dark:text-white text-[#2B2B7A] shadow-sm'
+                  : 'text-gray-700 dark:text-white hover:text-gray-900'
+              }`}
+            >
+              {t('Rasmlar')}
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('videolar')
+                Cookies.set('admin-gallery-tab', 'videolar')
+                setPage(1)
+                setSort('asc')
+              }}
+              className={`px-6 py-3 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'videolar'
+                  ? 'bg-white dark:bg-[#372AAC] dark:text-white text-[#2B2B7A] shadow-sm'
+                  : 'text-gray-700 dark:text-white hover:text-gray-900'
+              }`}
+            >
+              {t('Videolar')}
+            </button>
           </div>
           <Button
             onClick={() => setOpen(true)}
@@ -150,99 +155,135 @@ const Galereya = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-          {currentCards.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              className="flex flex-col cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-              onClick={() => setSelectedGallery(item)}
-            >
-              <div className="relative group overflow-hidden rounded-lg ">
-                <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
-                  <Image
-                    src={placeholderImage}
-                    alt={item.alt}
-                    className=" object-cover"
-                    priority={currentPage === 1 && item.id <= 6}
-                  />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 max-h-[650px]">
+          {activeTab === 'rasmlar' &&
+            images.data?.data?.map((item: Record<string, any>) => (
+              <motion.div
+                key={item?.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                className="flex flex-col cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setSelectedGallery(item)}
+              >
+                <div className="relative group overflow-hidden rounded-lg ">
+                  <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
+                    <Image
+                      src={`${baseBackendUrl}${item?.thumbnailUrl}`}
+                      fill
+                      unoptimized={process.env.NODE_ENV === 'development'}
+                      alt={'Image'}
+                      className="object-cover bg-center bg-cover"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+                      {item?.url?.length + 1} Photos
+                    </span>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white bg-black/50 px-3 py-1 rounded-full text-sm">
-                    {item.images.length} Photos
-                  </span>
+              </motion.div>
+            ))}
+
+          {activeTab === 'videolar' &&
+            videos.data?.data?.map((item: Record<string, any>) => (
+              <motion.div
+                key={item?.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                className="flex flex-col cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setSelectedGallery(item)}
+              >
+                <div className="relative group overflow-hidden rounded-lg ">
+                  <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
+                    <Image
+                      src={`${baseBackendUrl}${item?.thumbnailUrl}`}
+                      fill
+                      unoptimized={process.env.NODE_ENV === 'development'}
+                      alt={'Image'}
+                      className="object-cover bg-center bg-cover"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+                      {item?.url?.length + 1} Photos
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
         </div>
-        <div className="mt-8 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={`cursor-pointer ${
-                    currentPage === 1 ? 'pointer-events-none opacity-50' : ''
-                  }`}
-                />
-              </PaginationItem>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => {
-                  if (
-                    page === 1 ||
-                    page === totalPages ||
-                    (page >= currentPage - 1 && page <= currentPage + 1)
-                  ) {
-                    return (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => handlePageChange(page)}
-                          isActive={page === currentPage}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    )
-                  }
-                  if (
-                    (page === currentPage - 2 && currentPage > 3) ||
-                    (page === currentPage + 2 && currentPage < totalPages - 2)
-                  ) {
-                    return (
-                      <PaginationItem key={`ellipsis-${page}`}>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    )
-                  }
-                  return null
-                }
-              )}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={`cursor-pointer ${
-                    currentPage === totalPages
-                      ? 'pointer-events-none opacity-50'
-                      : ''
-                  }`}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+
+        <div className="flex justify-center items-center gap-3">
+          {/* First page button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setPage(1)}
+            disabled={page === 1} // birinchi sahifada disable
+          >
+            <ChevronsLeft />
+          </Button>
+
+          {/* Previous page button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (page > 1) {
+                setPage(page - 1)
+              }
+            }}
+            disabled={page === 1} // birinchi sahifada disable
+          >
+            <ChevronLeft />
+          </Button>
+
+          {/* Page input */}
+          <Input
+            disabled={totalPages === 1}
+            type="number"
+            value={page}
+            className="w-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none flex justify-center items-center text-center m-0"
+            onChange={(e) => setPage(Number(e.target.value))}
+          />
+
+          {/* Next page button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (page < totalPages) {
+                setPage(page + 1)
+              }
+            }}
+            disabled={page === totalPages} // oxirgi sahifada disable
+          >
+            <ChevronRight />
+          </Button>
+
+          {/* Last page button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setPage(totalPages)}
+            disabled={page === totalPages} // oxirgi sahifada disable
+          >
+            <ChevronsRight />
+          </Button>
         </div>
       </div>
+
       <AnimatePresence>
         {selectedGallery && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-4"
             onClick={() => setSelectedGallery(null)}
           >
             <motion.div
@@ -279,18 +320,21 @@ const Galereya = () => {
                 className="w-full h-full"
                 loop
               >
-                {selectedGallery.images.map((img, idx) => (
-                  <SwiperSlide key={idx}>
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={placeholderImage}
-                        alt={`${selectedGallery.alt}-${idx}`}
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))}
+                {[selectedGallery?.thumbnailUrl, ...selectedGallery?.url].map(
+                  (img: string, idx: number) => (
+                    <SwiperSlide key={idx}>
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={`${baseBackendUrl}${img}`}
+                          alt={`${img}-${idx}`}
+                          fill
+                          unoptimized={process.env.NODE_ENV === 'development'}
+                          className="object-cover bg-center bg-cover"
+                        />
+                      </div>
+                    </SwiperSlide>
+                  )
+                )}
               </Swiper>
             </motion.div>
           </motion.div>
@@ -321,41 +365,36 @@ const Galereya = () => {
                   if (e.target.files) {
                     const newFiles = Array.from(e.target.files)
                     setFiles((prev) => {
-                      if (prev && prev.length >= 6) {
-                        return prev
-                      }
-                      return prev
-                        ? [...Array.from(prev), ...newFiles]
-                        : (newFiles as any)
+                      const merged = [...prev, ...newFiles]
+                      return merged.slice(0, 25) // 👈 maksimal 6 ta fayl
                     })
                   }
                 }}
               />
-              {files &&
-                Array.from(files).map((file, index) => (
-                  <div
-                    key={index}
-                    className="relative w-24 h-24 border-2 rounded-lg flex items-center justify-center border-dashed"
+              {files.map((file, index) => (
+                <div
+                  key={index}
+                  className="relative w-24 h-24 border-2 rounded-lg flex items-center justify-center border-dashed"
+                >
+                  <Image
+                    src={URL.createObjectURL(file)}
+                    alt={`file-${index}`}
+                    width={100}
+                    height={100}
+                    className="object-contain bg-contain w-full h-full"
+                  />
+                  <button
+                    onClick={() => {
+                      const newFiles = [...files]
+                      newFiles.splice(index, 1)
+                      setFiles(newFiles)
+                    }}
+                    className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 text-white bg-red-500 hover:bg-red-600 p-1 rounded-full"
                   >
-                    <Image
-                      src={URL.createObjectURL(file)}
-                      alt={`file-${index}`}
-                      width={100}
-                      height={100}
-                      className="object-contain bg-contain w-full h-full"
-                    />
-                    <button
-                      onClick={() => {
-                        const newFiles = Array.from(files)
-                        newFiles.splice(index, 1)
-                        setFiles(newFiles as any)
-                      }}
-                      className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 text-white bg-red-500 hover:bg-red-600 p-1 rounded-full"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
             </div>
             <Button onClick={() => createGalereyaPhoto.mutate()}>
               Qo'shish

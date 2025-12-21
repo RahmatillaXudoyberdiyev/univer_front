@@ -2,7 +2,17 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 
 const nextConfig: NextConfig = {
-    reactCompiler: true,
+  reactCompiler: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '1248',
+        pathname: '/**',
+      },
+    ],
+  },
 }
 
 const withNextIntl = createNextIntlPlugin()

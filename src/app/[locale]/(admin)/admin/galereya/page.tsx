@@ -1,5 +1,6 @@
 import AdminGalereya from '@/components/admin/galereya/galereya'
 import { getTranslations } from 'next-intl/server'
+import { cookies } from 'next/headers'
 
 export async function generateMetadata({
   params,
@@ -17,10 +18,12 @@ export async function generateMetadata({
   }
 }
 
-const Page = () => {
+const Page = async () => {
+  const store = await cookies()
+  const tab = store.get('admin-gallery-tab')?.value
   return (
     <div>
-      <AdminGalereya />
+      <AdminGalereya tab={tab as any} />
     </div>
   )
 }
