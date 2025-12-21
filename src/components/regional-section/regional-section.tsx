@@ -4,32 +4,63 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { User } from 'lucide-react'
 import React, { useState } from 'react'
 
-const regionData: { [key: string]: { name: string; title: string; phone: string; email: string; img: string }[] } = {
-    'kattakurganskiy-rayon': [
-        {
-            name: 'Xaitov Jasur Akbarovich',
-            title: "KATTAQO'RG'ON SHAHAR HOKIMINING O'RINBOSARI - INVESTITSIYALAR, SANOAT VA SAVDO BO'LIMI BOSHLIG'I",
-            phone: '+998 93 349 36 80',
-            email: 'info@saminvest.uz',
-            img: '',
-        },
-        {
-            name: "Isaqulov Shoxrux Jamoliddin o'g'li",
-            title: "KATTAQO'RG'ON TUMANI HOKIMINING O'RINBOSARI - INVESTITSIYALAR, SANOAT VA SAVDO BO'LIMI BOSHLIG'I",
-            phone: '+998 99 296 11 00',
-            email: 'info@saminvest.uz',
-            img: '',
-        },
-    ],
-    'pahtachiyskiy-rayon': [
-        {
-            name: 'Abdunabiyev Mansur Abdurasulovich',
-            title: "Paxtachi tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
-            phone: '+998 90 195 99 11',
-            email: 'info@saminvest.uz',
-            img: '',
-        },
-    ],
+interface Official {
+    name: string
+    title: string
+    phone: string
+    email: string
+    img: string
+}
+
+interface RegionGroup {
+    regionName: string
+    officials: Official[]
+}
+
+const regionData: { [key: string]: RegionGroup } = {
+    'kattakurganskiy-rayon': {
+        regionName: "Kattaqo'rg'on tumani",
+        officials: [
+            {
+                name: 'Xaitov Jasur Akbarovich',
+                title: "KATTAQO'RG'ON SHAHAR HOKIMINING O'RINBOSARI - INVESTITSIYALAR, SANOAT VA SAVDO BO'LIMI BOSHLIG'I",
+                phone: '+998 93 349 36 80',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+            {
+                name: "Isaqulov Shoxrux Jamoliddin o'g'li",
+                title: "KATTAQO'RG'ON TUMANI HOKIMINING O'RINBOSARI - INVESTITSIYALAR, SANOAT VA SAVDO BO'LIMI BOSHLIG'I",
+                phone: '+998 99 296 11 00',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'pahtachiyskiy-rayon': {
+        regionName: 'Paxtachi tumani',
+        officials: [
+            {
+                name: 'Abdunabiyev Mansur Abdurasulovich',
+                title: "Paxtachi tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 90 195 99 11',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'narpayskiy-rayon': {
+        regionName: 'Narpay tuman',
+        officials: [
+            {
+                name: 'Abdulazizov Abdulaziz Abdullayevich',
+                title: "Narqo tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 90 195 99 11',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
 }
 
 const RegionalSection = () => {
@@ -37,17 +68,21 @@ const RegionalSection = () => {
 
     const handleRegionClick = (e: React.MouseEvent<SVGPathElement>) => {
         const id = e.currentTarget.id
-        if (regionData[id as keyof typeof regionData]) {
+        if (regionData[id]) {
             setActiveRegion(id)
         }
     }
 
-    const currentData =
-        regionData[activeRegion as keyof typeof regionData] ||
-        regionData['kattakurganskiy-rayon']
+    const currentRegion =
+        regionData[activeRegion] || regionData['kattakurganskiy-rayon']
 
     return (
         <section className="container-cs py-12">
+            <div className="flex justify-between items-center pb-5">
+                <h1 className="font-bold text-2xl mb-6 pb-2 border-b-2 border-[#2B2B7A] w-fit ">
+                    Hududiy bo'linmalar
+                </h1>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-12 md:gap-8 items-center">
                 <div className="col-span-12 xl:col-span-6 order-2 lg:order-1">
                     <AnimatePresence mode="wait">
@@ -57,14 +92,21 @@ const RegionalSection = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.98 }}
                             transition={{ duration: 0.3 }}
-                            className="relative overflow-hidden p-5 md:p-10 rounded-[40px]  shadow-[0_10px_50px_rgba(0,0,0,0.05)] border border-slate-100 dark:bg-[#0A0A3D]"
+                            className="relative overflow-hidden p-5 md:p-10 rounded-[40px] shadow-[0_10px_50px_rgba(0,0,0,0.05)] border border-slate-100 dark:bg-[#0A0A3D]"
                         >
+                            <div className="relative z-10 mb-8">
+                                <h2 className="text-2xl md:text-3xl font-black text-[#05053C] dark:text-white mt-1">
+                                    {currentRegion.regionName}
+                                </h2>
+                                <div className="h-1 w-16 bg-blue-500 mt-3 rounded-full" />
+                            </div>
+
                             <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
                                 <svg
                                     width="200"
                                     height="200"
                                     viewBox="0 0 200 200"
-                                    className='w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-50 lg:h-50'
+                                    className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-50 lg:h-50"
                                 >
                                     <path
                                         d="M100 0L200 100L100 200L0 100Z"
@@ -75,24 +117,12 @@ const RegionalSection = () => {
                             </div>
 
                             <div className="relative z-10 space-y-10">
-                                {regionData[activeRegion]?.map(
+                                {currentRegion.officials.map(
                                     (official, index) => (
                                         <React.Fragment key={index}>
                                             <div className="flex items-start gap-5 md:gap-8">
-                                                <div
-                                                    className={`shrink-0 ${
-                                                        index === 0
-                                                            ? 'w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full border-[5px] border-blue-500 p-1'
-                                                            : 'w-16 h-18 sm:w-20 sm:h-23 md:w-24 md:h-27 lg:w-28 lg:h-32  rounded-2xl bg-slate-200 overflow-hidden shadow-sm'
-                                                    }`}
-                                                >
-                                                    <div
-                                                        className={`w-full h-full overflow-hidden flex items-center justify-center ${
-                                                            index === 0
-                                                                ? 'rounded-full bg-slate-100'
-                                                                : ''
-                                                        }`}
-                                                    >
+                                                <div className="shrink-0 w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-28 lg:w-28 lg:h-32 rounded-2xl bg-slate-100 dark:bg-slate-800/50 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
+                                                    <div className="w-full h-full flex items-center justify-center">
                                                         {official.img ? (
                                                             <img
                                                                 src={
@@ -105,16 +135,8 @@ const RegionalSection = () => {
                                                             />
                                                         ) : (
                                                             <User
-                                                                size={
-                                                                    index === 0
-                                                                        ? 50
-                                                                        : 40
-                                                                }
-                                                                className={
-                                                                    index === 0
-                                                                        ? 'text-blue-500'
-                                                                        : 'text-slate-400'
-                                                                }
+                                                                size={40}
+                                                                className="text-slate-400 dark:text-slate-500"
                                                             />
                                                         )}
                                                     </div>
@@ -145,20 +167,12 @@ const RegionalSection = () => {
                                             </div>
 
                                             {index <
-                                                regionData[activeRegion]
-                                                    .length -
+                                                currentRegion.officials.length -
                                                     1 && (
                                                 <div className="h-px w-full bg-slate-200" />
                                             )}
                                         </React.Fragment>
                                     )
-                                )}
-
-                                {(!regionData[activeRegion] ||
-                                    regionData[activeRegion].length === 0) && (
-                                    <div className="py-10 text-center text-slate-400 italic">
-                                        Ma'lumot topilmadi
-                                    </div>
                                 )}
                             </div>
                         </motion.div>

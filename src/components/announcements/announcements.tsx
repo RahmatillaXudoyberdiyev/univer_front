@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 import 'swiper/css'
@@ -9,14 +10,15 @@ import placeholderImage from '../../../public/image.png'
 import { Button } from '../ui/button'
 
 const Announcements = () => {
+    const t = useTranslations()
     return (
         <div className="container-cs mb-5">
             <div className="flex justify-between items-center py-5">
                 <h1 className="font-bold text-2xl mb-6 pb-2 border-b-2 border-[#2B2B7A] w-fit">
-                    So'nggi e'lonlar
+                    {t('Elonlar')}
                 </h1>
                 <Button variant="ghost" asChild>
-                    <Link href="">Barcha E'lonlar</Link>
+                    <Link href="/announcements">{t('Barcha Elonlar')}</Link>
                 </Button>
             </div>
             <Swiper
@@ -32,18 +34,25 @@ const Announcements = () => {
             >
                 {Array.from({ length: 10 }).map((_, index) => (
                     <SwiperSlide>
-                        <Image
-                            src={placeholderImage}
-                            alt=""
-                            width={500}
-                            className="mb-5 object-cover"
-                        />
+                        <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
+                            <Link href="">
+                            <Image
+                                src={placeholderImage}
+                                alt=""
+                                width={500}
+                                className="mb-5 object-cover"
+                                />
+                                </Link>
+                        </div>
+
                         <div className="h-20px">
                             <p className="text-[#76767A]">18.11.2025, 11:38</p>
+                            <Link href="">
                             <p className="font-bold text-lg mb-6">
                                 Lorem ipsum dolor sit amet consectetur
                                 adipisicing elit. Quos, quia.
                             </p>
+                            </Link>
                         </div>
                     </SwiperSlide>
                 ))}

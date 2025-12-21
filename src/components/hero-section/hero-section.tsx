@@ -1,34 +1,38 @@
 'use client'
+
+import { Button } from '@/components/ui/button'
+import { Calendar } from 'lucide-react'
 import Image from 'next/image'
 import 'swiper/css'
-import 'swiper/css/scrollbar'
-import { A11y, Autoplay, Scrollbar } from 'swiper/modules'
+import { A11y, Autoplay } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import placeholderImage from '../../../public/image.png'
-import { Button } from "@/components/ui/button"
-import { Calendar } from "lucide-react"
 
-const HeroSection = () => {
-    const slides = Array.from({ length: 10 }).map((_, i) => ({
-        id: i,
-        title: 'Davlat fuqarolik xizmatchilari uchun navbatdagi "Siyosiy-ma’rifat soati" tashkil etildi',
-        date: '05.12.2025',
-        image: placeholderImage
-    }));
+interface Slide {
+    id: number
+    title: string
+    date: string
+    image: string
+}
 
+interface HeroSectionProps {
+    slides: Slide[]
+}
+
+const HeroSection = ({ slides }: HeroSectionProps) => {
     return (
-        <div className='mb-5'>
+        <div className="mb-5">
             <Swiper
-                modules={[Scrollbar, A11y, Autoplay]}
+                modules={[A11y, Autoplay]}
                 slidesPerView={1}
-                scrollbar={{ draggable: true, hide: true }}
                 autoplay={{ delay: 5000, pauseOnMouseEnter: true }}
                 loop
-
                 className="w-full h-screen"
             >
                 {slides.map((slide) => (
-                    <SwiperSlide key={slide.id} className="relative w-full h-full">
+                    <SwiperSlide
+                        key={slide.id}
+                        className="relative w-full h-full"
+                    >
                         <div className="relative w-full h-full before:content-[''] before:absolute before:inset-0 before:bg-black/50 before:z-10">
                             <Image
                                 src={slide.image}
@@ -36,6 +40,7 @@ const HeroSection = () => {
                                 fill
                                 className="object-cover"
                                 priority
+                                loading="eager"
                             />
                         </div>
 

@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl'
 import { ThemeProvider } from 'next-themes'
 import { SidebarProvider } from '../ui/sidebar'
-import { AppSidebar } from './app-provider'
+import { AppSidebar } from './app-sidebar'
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     return (

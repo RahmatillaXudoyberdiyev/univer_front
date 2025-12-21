@@ -47,13 +47,13 @@ const UsefulLinks = () => {
                             rel="noopener noreferrer"
                         >
                             <div
-                                className="bg-white rounded-xl border border-gray-200 shadow-sm h-full p-5
+                                className="bg-white dark:bg-[#232351]  rounded-xl border border-gray-200 shadow-sm h-full min-h-20 p-5
                 transition-all duration-300
-                hover:shadow-md hover:border-[#2B2B7A]/30
-                hover:-translate-y-1"
+                hover:shadow-md hover:border-[#2B2B7A]/30 flex items-center
+                "
                             >
-                                <div className="flex items-start gap-3">
-                                    <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-[#2B2B7A] flex items-center justify-center">
+                                <div className="flex items-start gap-3 ">
+                                    <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-[#2B2B7A]  flex items-center justify-center">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="12"
@@ -74,7 +74,7 @@ const UsefulLinks = () => {
                                             />
                                         </svg>
                                     </div>
-                                    <p className="font-medium text-gray-800 group-hover:text-[#2B2B7A] line-clamp-2">
+                                    <p className="font-medium text-gray-800 group-hover:text-[#2B2B7A] line-clamp-2 dark:text-white">
                                         {link.title}
                                     </p>
                                 </div>

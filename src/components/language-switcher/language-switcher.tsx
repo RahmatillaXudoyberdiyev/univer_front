@@ -7,12 +7,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import Cookies from 'js-cookie'
 import { GlobeIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
 const locales = [
     { label: "O'zbekcha", value: 'uz', flag: '🇺🇿' },
+    { label: 'Ўзбекча', value: 'oz', flag: '🇺🇿' },
     { label: 'English', value: 'en', flag: '🇺🇸' },
     { label: 'Русский', value: 'ru', flag: '🇷🇺' },
 ]
@@ -20,14 +22,23 @@ const locales = [
 export function LanguageSwitcher() {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
-    const [open, setOpen] = useState(false)
 
-    const handleChange = (value: string) => {
-        startTransition(() => {
-            document.cookie = `locale=${value}; path=/; max-age=31536000; SameSite=Lax`
-            localStorage.setItem('locale', value)
-            window.location.reload()
-        })
+    const [open, setOpen] = useState(false)
+    const pathname = usePathname()
+
+    const handleChange = (locale: string) => {
+        Cookies.set('intl-locale', locale, { path: '/', sameSite: 'Lax' })
+        document.cookie = `locale=${locale}; path=/; max-age=31536000; SameSite=Lax`
+        localStorage.setItem('locale', locale)
+
+        const currentLocale = pathname.split('/')[1]
+        const newPath = pathname.replace(
+            new RegExp(`^/${currentLocale}`),
+            `/${locale}`
+        )
+
+        router.push(newPath)
+        router.refresh()
         setOpen(false)
     }
 
@@ -39,7 +50,7 @@ export function LanguageSwitcher() {
                     <span className="sr-only">Toggle language</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className='dark:bg-[#0A0A3D]'>
+            <DropdownMenuContent align="end" className="dark:bg-[#0A0A3D] z-80">
                 {locales.map((lang) => (
                     <DropdownMenuItem
                         key={lang.value}

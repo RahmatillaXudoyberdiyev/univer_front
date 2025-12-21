@@ -79,6 +79,8 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+    --primary-cs-color: #0a0a3d;
+    --button-cs-color: #372aac;
 }
 
 .dark {
@@ -113,6 +115,8 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+    --primary-cs-color: #0a0a3d;
+    --button-cs-color: #372aac;
 }
 
 @layer base {
@@ -133,14 +137,14 @@
         display: none;
     }
     .no-scrollbar {
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }
 
 @import 'leaflet/dist/leaflet.css';
 .leaflet-container {
-  height: 200px;
-  border-radius: 8px;
-  overflow: hidden;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
 }

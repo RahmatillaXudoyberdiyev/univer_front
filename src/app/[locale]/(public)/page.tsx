@@ -7,9 +7,16 @@ import StatisticsSection from '@/components/statistics-section/statistics-sectio
 import UsefulLinks from '@/components/useful-links/useful-links'
 
 export default function Home() {
+    const slides = Array.from({ length: 10 }).map((_, i) => ({
+        id: i,
+        title: 'Davlat fuqarolik xizmatchilari uchun navbatdagi "Siyosiy-ma’rifat soati" tashkil etildi',
+        date: '05.12.2025',
+        image: '/image.png',
+    }))
+
     return (
         <div>
-            <HeroSection />
+            <HeroSection slides={slides} />
             <NewsSection />
             <StatisticsSection />
             <Announcements />
