@@ -7,41 +7,41 @@ import StatisticsSection from '@/components/statistics-section/statistics-sectio
 import UsefulLinks from '@/components/useful-links/useful-links'
 import { getTranslations } from 'next-intl/server'
 import mainImg from '../../../../public/image.png'
+import Chatbot from '@/components/chatbot/chatbot'
 
 export async function generateMetadata({
-  params,
+    params,
 }: {
-  params: Promise<{ locale: string }>
+    params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
-  const t = await getTranslations({ locale })
+    const { locale } = await params
+    const t = await getTranslations({ locale })
 
-  return {
-    title: t('Bosh sahifa'),
-    description: t(
-      'Samarqand viloyati Investitsiyalar sanoat va savdo boshqarmasi'
-    ),
-  }
+    return {
+        title: t('Bosh sahifa'),
+        description: t(
+            'Samarqand viloyati Investitsiyalar sanoat va savdo boshqarmasi'
+        ),
+    }
 }
 
 export default function Home() {
-  const slides = Array.from({ length: 10 }).map((_, i) => ({
-    id: i,
-    title:
-      'Davlat fuqarolik xizmatchilari uchun navbatdagi "Siyosiy-ma’rifat soati" tashkil etildi',
-    date: '05.12.2025',
-    image: mainImg,
-  }))
+    const slides = Array.from({ length: 10 }).map((_, i) => ({
+        id: i,
+        title: 'Davlat fuqarolik xizmatchilari uchun navbatdagi "Siyosiy-ma’rifat soati" tashkil etildi',
+        date: '05.12.2025',
+        image: mainImg,
+    }))
 
-  return (
-    <div>
-      <HeroSection slides={slides} />
-      <NewsSection />
-      <StatisticsSection />
-      <Announcements />
-      <RegionalSection />
-      <Events />
-      <UsefulLinks />
-    </div>
-  )
+    return (
+        <div>
+            <HeroSection slides={slides} />
+            <NewsSection />
+            <StatisticsSection />
+            <Announcements />
+            <RegionalSection />
+            <Events />
+            <UsefulLinks />
+        </div>
+    )
 }

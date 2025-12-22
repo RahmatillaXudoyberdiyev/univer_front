@@ -1,5 +1,7 @@
 'use client'
 
+import { api } from '@/models/axios'
+import { useQuery } from '@tanstack/react-query'
 import {
     Facebook,
     Instagram,
@@ -10,15 +12,23 @@ import {
     Youtube,
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import logo from '../../../public/logo.png'
+import { useLocale } from 'next-intl'
 
 const Footer = () => {
+    const locale = useLocale()
+    const detailsData = useQuery({
+        queryKey: ['details'],
+        queryFn: async () => {
+            const res = await api.get('/details')
+            return res.data
+        },
+    })
     return (
         <footer className="bg-[#0A0A3D] py-12 text-white">
             <div className="container-cs px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-
-                    {/* Branding Section */}
                     <div className="flex flex-col items-center md:items-start gap-6">
                         <div className="relative p-2 rounded-full bg-white/5 border border-white/10 w-fit">
                             <Image
@@ -38,26 +48,46 @@ const Footer = () => {
                             </h1>
                         </div>
                         <p className=" text-white/70 text-center md:text-left max-w-lg leading-relaxed">
-                            Barcha huquqlar himoyalangan. Saytdagi barcha huquqlar O'zbekiston Respublikasi qonunlariga,
-                            shu jumladan mualliflik huquqi va turdosh huquqlarga muvofiq himoya qilinadi.
-                            Sayt materiallaridan foydalanganda, Samarqand viloyati Investitsiyalar, sanoat va savdo
-                            boshqarmasi saytiga havola ko'rsatilishi shart.
+                            Barcha huquqlar himoyalangan. Saytdagi barcha
+                            huquqlar O'zbekiston Respublikasi qonunlariga, shu
+                            jumladan mualliflik huquqi va turdosh huquqlarga
+                            muvofiq himoya qilinadi. Sayt materiallaridan
+                            foydalanganda, Samarqand viloyati Investitsiyalar,
+                            sanoat va savdo boshqarmasi saytiga havola
+                            ko'rsatilishi shart.
                         </p>
                     </div>
 
-                    {/* Aloqa Section */}
                     <div className="flex flex-col gap-6">
                         <h2 className="text-2xl font-bold">Aloqa</h2>
 
                         <div className="space-y-5 text-white/90">
                             <div className="flex items-center gap-4">
-                                <Phone size={22} className="text-blue-400" />
-                                <a
-                                    href="tel:+998662304851"
-                                    className="text-base hover:text-blue-400 transition-colors"
-                                >
-                                    +998-66-230-48-51
-                                </a>
+                                <div className='flex flex-col gap-4'>
+                                    {detailsData.data?.trustLinePhones &&
+                                        detailsData.data?.trustLinePhones.map(
+                                            (phone: string, i: number) => (
+                                                <div
+                                                    key={i}
+                                                    className="flex items-center gap-4"
+                                                >
+                                                    <Phone
+                                                        size={22}
+                                                        className="text-blue-400"
+                                                    />
+                                                    <Link
+                                                        href={`tel:+${phone.replace(
+                                                            /\D/g,
+                                                            ''
+                                                        )}`}
+                                                        className="text-base hover:text-blue-400 transition-colors"
+                                                    >
+                                                        {phone}
+                                                    </Link>
+                                                </div>
+                                            )
+                                        )}
+                                </div>
                             </div>
 
                             <div className="flex items-center gap-4">
@@ -66,7 +96,7 @@ const Footer = () => {
                                     href="mailto:info@saminvest.uz"
                                     className="text-base hover:text-blue-400 transition-colors"
                                 >
-                                    info@saminvest.uz
+                                    {detailsData.data?.infoEmails}
                                 </a>
                             </div>
 
@@ -85,8 +115,9 @@ const Footer = () => {
                         <div>
                             <h3 className="font-bold mb-2">Ish vaqti:</h3>
                             <p className="text-base text-white/80">
-                                Dushanba - Juma: 8:00 dan 18:00 gacha <br />
-                                Shanba, Yakshanba: Yopiq
+                                {
+                                    detailsData.data?.workingHours[locale]
+                                }
                             </p>
                         </div>
 

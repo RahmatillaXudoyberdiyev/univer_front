@@ -17,7 +17,6 @@ const AdminMenus = async () => {
         { name: 'name', label: t('Name'), type: 'localized-text', required: true },
         { name: 'slug', label: t('Path name'), type: 'text', required: true },
         { name: 'order', label: t('Order'), type: 'number', required: true },
-        { name: 'static', label: t('Static'), type: 'checkbox' },
 
     ]
 

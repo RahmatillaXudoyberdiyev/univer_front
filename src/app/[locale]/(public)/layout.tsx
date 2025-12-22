@@ -5,20 +5,22 @@ import Prefooter from '@/components/prefooter/prefooter'
 import Preheader from '@/components/preheader/preheader'
 import Providers from '@/components/providers/providers'
 import '../../globals.css'
+import Chatbot from '@/components/chatbot/chatbot'
 
 export default function PublicLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  return (
-    <Providers>
-      <Preheader />
-      <Header />
-      {children}
-      <Prefooter />
-      <Footer />
-      <Postfooter />
-    </Providers>
-  )
+    return (
+        <Providers>
+            <Preheader />
+            <Header />
+            {children}
+            <Prefooter />
+            <Footer />
+            <Postfooter />
+            <Chatbot />
+        </Providers>
+    )
 }

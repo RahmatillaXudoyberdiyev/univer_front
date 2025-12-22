@@ -5,6 +5,8 @@ import {
     SidebarFooter,
     SidebarHeader,
 } from '@/components/ui/sidebar'
+import { api } from '@/models/axios'
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
     Facebook,
@@ -36,6 +38,13 @@ const itemVariants = {
 
 export function AppSidebar() {
     const t = useTranslations()
+    const detailsData = useQuery({
+        queryKey: ['details'],
+        queryFn: async () => {
+            const res = await api.get('/details')
+            return res.data
+        },
+    })
     return (
         <Sidebar className="border-r-0">
             <SidebarHeader className="bg-[#0A0A3D] pt-12 pb-6 px-6 border-b border-white/10">
@@ -74,7 +83,7 @@ export function AppSidebar() {
                     <ContactCard
                         icon={<Phone size={18} className="text-blue-400" />}
                         label={t('Ishonch telefoni')}
-                        value="+998 (66) 230-48-51"
+                        value={detailsData.data?.trustLinePhones || ''}
                     />
                     <ContactCard
                         icon={
@@ -84,16 +93,13 @@ export function AppSidebar() {
                             />
                         }
                         label={t('Devonxona')}
-                        value="+998 (66) 230-48-44"
+                        value={detailsData.data?.receptionPhone || ''}
                     />
                     <div className="pt-2">
                         <ContactCard
                             icon={<Mail size={18} className="text-amber-400" />}
                             label={t('Korporativ pochta')}
-                            value={[
-                                'saminvestcom@gmail.com',
-                                'samvil.invest@exat.uz',
-                            ]}
+                            value={detailsData.data?.corporateEmails || ''}
                         />
                     </div>
                 </motion.div>
@@ -104,11 +110,11 @@ export function AppSidebar() {
                     {t('Ijtimoiy tarmoqlar')}
                 </p>
                 <div className="flex justify-center gap-3">
-                        <SocialIcon
-                            icon={<Send size={18} />}
-                            color="hover:bg-sky-500"
-                            href="https://t.me/samarqandinvestkompaniyasi"
-                        />
+                    <SocialIcon
+                        icon={<Send size={18} />}
+                        color="hover:bg-sky-500"
+                        href="https://t.me/samarqandinvestkompaniyasi"
+                    />
 
                     <SocialIcon
                         icon={<Facebook size={18} />}
@@ -170,7 +176,15 @@ function ContactCard({
     )
 }
 
-function SocialIcon({ icon, color, href }: { icon: React.ReactNode; color: string, href: string }) {
+function SocialIcon({
+    icon,
+    color,
+    href,
+}: {
+    icon: React.ReactNode
+    color: string
+    href: string
+}) {
     return (
         <motion.a
             href={href}

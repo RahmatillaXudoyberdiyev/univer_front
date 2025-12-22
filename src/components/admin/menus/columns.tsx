@@ -28,7 +28,6 @@ const Actions = ({ id }: ActionProps) => {
         { name: 'name', label: t('Name'), type: 'localized-text' },
         { name: 'slug', label: t('Path name'), type: 'text' },
         { name: 'order', label: t('Order'), type: 'number' },
-        { name: 'static', label: 'Static', type: 'checkbox' },
     ]
 
     return (
