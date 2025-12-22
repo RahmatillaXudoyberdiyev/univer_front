@@ -10,13 +10,25 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
 import useNotify from '@/hooks/use-notify'
 import { api } from '@/models/axios'
 import { useQueryClient } from '@tanstack/react-query'
 import Cookies from 'js-cookie'
-import { Upload, X } from 'lucide-react'
+import {
+  Upload,
+  X,
+  Bold,
+  Italic,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
+  Quote,
+  Table as TableIcon,
+  Type,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import AdminNews from './admin-news'
 
@@ -46,6 +58,8 @@ const AdminPublication = ({
   const queryClient = useQueryClient()
   const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([])
 
+  const textareaRefs = useRef<Record<string, HTMLTextAreaElement | null>>({})
+
   const form = useForm<FormValues>({
     defaultValues: {
       titles: { uz: '', oz: '', ru: '', en: '' },
@@ -53,10 +67,38 @@ const AdminPublication = ({
     },
   })
 
+  const applyMarkdown = (
+    prefix: string,
+    suffix: string = '',
+    defaultValue: string = ''
+  ) => {
+    const el = textareaRefs.current[selectedLanguage]
+    if (!el) return
+
+    const start = el.selectionStart
+    const end = el.selectionEnd
+    const text = el.value
+    const selectedText = text.substring(start, end) || defaultValue
+
+    const before = text.substring(0, start)
+    const after = text.substring(end)
+
+    const newValue = `${before}${prefix}${selectedText}${suffix}${after}`
+
+    form.setValue(`contents.${selectedLanguage}`, newValue)
+
+    setTimeout(() => {
+      el.focus()
+      el.setSelectionRange(
+        start + prefix.length,
+        start + prefix.length + selectedText.length
+      )
+    }, 0)
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
-
     const newFilesArr = Array.from(files)
     const processedFiles: FileWithPreview[] = newFilesArr.map((file) => {
       const fileWithPreview = file as FileWithPreview
@@ -65,7 +107,6 @@ const AdminPublication = ({
       }
       return fileWithPreview
     })
-
     setSelectedFiles((prev) => [...prev, ...processedFiles].slice(0, 25))
     e.target.value = ''
   }
@@ -93,17 +134,11 @@ const AdminPublication = ({
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
       const formData = new FormData()
-
-      selectedFiles.forEach((file) => {
-        formData.append('files', file)
-      })
-
+      selectedFiles.forEach((file) => formData.append('files', file))
       formData.append('data', JSON.stringify(data))
 
       await api.post('/publication/create-news', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       })
 
       toastSuccess('Muvaffaqiyatli saqlandi')
@@ -114,10 +149,14 @@ const AdminPublication = ({
     }
   }
 
+  const { ref: contentRef, ...contentRest } = form.register(
+    `contents.${selectedLanguage}`
+  )
+
   return (
-    <div className="container-cs py-5 mb-5">
+    <div className="container-cs py-5 mb-5 text-foreground">
       <div className="flex justify-between items-center mb-8">
-        <div className="inline-flex rounded-lg bg-gray-100 dark:bg-[#0A0A3D] p-1">
+        <div className="inline-flex rounded-lg bg-muted p-1">
           <button
             onClick={() => {
               setActiveTab('news')
@@ -125,46 +164,42 @@ const AdminPublication = ({
             }}
             className={`px-6 py-3 text-sm font-medium rounded-md transition-colors ${
               activeTab === 'news'
-                ? 'bg-white dark:bg-[#372AAC] dark:text-white text-[#2B2B7A] shadow-sm'
-                : 'text-gray-700 dark:text-white'
+                ? 'bg-background shadow-sm'
+                : 'text-muted-foreground'
             }`}
           >
             {t('Yangiliklar')}
           </button>
         </div>
-
-        <button
+        <Button
           onClick={() => setAddModalOpen(true)}
-          className="rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white px-5 py-3"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
           Qo'shish
-        </button>
+        </Button>
       </div>
 
       {activeTab === 'news' && <AdminNews activeTab={activeTab} />}
 
       <Dialog open={addModalOpen} onOpenChange={handleModalClose}>
-        <DialogContent className="md:max-w-5xl flex flex-col h-[80vh] overflow-y-auto no-scrollbar">
-          <DialogHeader>
+        <DialogContent className="md:max-w-5xl flex flex-col h-[85vh] overflow-hidden p-0">
+          <DialogHeader className="p-6 pb-0">
             <DialogTitle>Yangi ma'lumot qo'shish</DialogTitle>
             <DialogDescription className="hidden" />
           </DialogHeader>
 
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex-1 flex flex-col"
+            className="flex-1 flex flex-col overflow-hidden"
           >
-            <div className="flex-1 px-1">
-              <div className="space-y-4 mb-8">
-                <Label>Media fayllar (Rasm yoki Video)</Label>
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-600">
-                    Fayllarni tanlang
-                  </p>
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
+              <div className="space-y-4">
+                <Label>Media fayllar</Label>
+                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                  <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
                   <label
                     htmlFor="file-upload"
-                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+                    className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-secondary cursor-pointer"
                   >
                     Fayl tanlash
                   </label>
@@ -177,38 +212,30 @@ const AdminPublication = ({
                     className="hidden"
                   />
                 </div>
-
                 {selectedFiles.length > 0 && (
-                  <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  <ul className="grid grid-cols-4 gap-4">
                     {selectedFiles.map((file, index) => (
                       <li
                         key={index}
-                        className="relative group border rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-800"
+                        className="relative group border rounded-md overflow-hidden bg-muted"
                       >
-                        {file.preview ? (
-                          file.type.startsWith('image/') ? (
-                            <img
-                              src={file.preview}
-                              alt={file.name}
-                              className="w-full h-32 object-cover"
-                            />
-                          ) : (
-                            <video
-                              src={file.preview}
-                              className="w-full h-32 object-cover"
-                            />
-                          )
+                        {file.preview && file.type.startsWith('image/') ? (
+                          <img
+                            src={file.preview}
+                            alt=""
+                            className="w-full h-24 object-cover"
+                          />
                         ) : (
-                          <div className="w-full h-32 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                            <Upload className="h-12 w-12 text-gray-400" />
+                          <div className="w-full h-24 flex items-center justify-center bg-muted text-xs">
+                            Video/File
                           </div>
                         )}
                         <button
                           type="button"
                           onClick={() => removeFile(index)}
-                          className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100"
                         >
-                          <X className="h-4 w-4" />
+                          <X className="h-3 w-3" />
                         </button>
                       </li>
                     ))}
@@ -216,65 +243,136 @@ const AdminPublication = ({
                 )}
               </div>
 
-              <div className="mb-6">
-                <Label>Til</Label>
-                <div className="flex flex-wrap gap-1 bg-gray-100 dark:bg-gray-800 p-1 mt-2 rounded-lg">
+              <div className="space-y-4">
+                <Label>Til va Tarkib</Label>
+                <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
                   {(['uz', 'oz', 'ru', 'en'] as Language[]).map((lang) => (
                     <button
                       key={lang}
                       type="button"
                       onClick={() => setSelectedLanguage(lang)}
-                      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                      className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${
                         selectedLanguage === lang
-                          ? 'bg-white dark:bg-indigo-600 text-indigo-700 dark:text-white shadow-sm'
-                          : 'text-gray-700 dark:text-gray-300'
+                          ? 'bg-background shadow-sm'
+                          : 'text-muted-foreground'
                       }`}
                     >
-                      {lang === 'uz'
-                        ? "O'zbekcha"
-                        : lang === 'oz'
-                        ? "O'zbekcha (Kirill)"
-                        : lang === 'ru'
-                        ? 'Русский'
-                        : 'English'}
+                      {lang.toUpperCase()}
                     </button>
                   ))}
                 </div>
-              </div>
 
-              <div className="space-y-6">
-                <div className="flex flex-col gap-2">
-                  <Label>Sarlavha ({selectedLanguage.toUpperCase()})</Label>
+                <div className="space-y-4 bg-background border rounded-xl p-4 shadow-sm">
                   <Input
                     {...form.register(`titles.${selectedLanguage}`)}
-                    placeholder="Sarlavha..."
+                    placeholder="Sarlavha kiriting..."
+                    className="text-lg font-bold border-none px-0 focus-visible:ring-0"
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label>Kontent ({selectedLanguage.toUpperCase()})</Label>
+
+                  <div className="flex flex-wrap items-center gap-1 border-y py-2 bg-muted/30 -mx-4 px-4">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => applyMarkdown('**', '**', 'bold text')}
+                    >
+                      <Bold className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => applyMarkdown('*', '*', 'italic text')}
+                    >
+                      <Italic className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => applyMarkdown('# ', '', 'Heading')}
+                    >
+                      <Type className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        applyMarkdown('[', '](https://)', 'link text')
+                      }
+                    >
+                      <LinkIcon className="h-4 w-4" />
+                    </Button>
+                    <div className="w-[1px] h-4 bg-border mx-1" />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => applyMarkdown('- ', '', 'list item')}
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => applyMarkdown('1. ', '', 'ordered item')}
+                    >
+                      <ListOrdered className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => applyMarkdown('> ', '', 'blockquote')}
+                    >
+                      <Quote className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        applyMarkdown(
+                          '\n| Header | Header |\n| ------ | ------ |\n| Cell | Cell |',
+                          '',
+                          ''
+                        )
+                      }
+                    >
+                      <TableIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
+
                   <Textarea
-                    {...form.register(`contents.${selectedLanguage}`)}
-                    rows={8}
-                    className="resize-none"
+                    {...contentRest}
+                    ref={(e) => {
+                      contentRef(e)
+                      textareaRefs.current[selectedLanguage] = e
+                    }}
+                    placeholder="Ma'lumot matnini bu yerga yozing..."
+                    rows={12}
+                    className="border-none px-0 focus-visible:ring-0 resize-none min-h-[300px] font-mono text-sm"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
-              <button
+            <div className="flex justify-end gap-3 p-6 border-t bg-background">
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => handleModalClose(false)}
-                className="px-6 py-2 text-sm font-medium"
               >
                 Bekor qilish
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
-                className="px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8"
               >
                 Saqlash
-              </button>
+              </Button>
             </div>
           </form>
         </DialogContent>
