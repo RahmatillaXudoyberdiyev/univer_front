@@ -1,16 +1,17 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useLocale } from 'next-intl'
 import { useState } from 'react'
 
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
 } from '@/components/ui/pagination'
 import { api } from '@/models/axios'
 import { motion } from 'framer-motion'
@@ -19,152 +20,263 @@ import Link from 'next/link'
 import placeholderImage from '../../../../public/image.png'
 
 const AdminNews = ({ activeTab }: { activeTab: string }) => {
-  const totalCards = 50
-  const cardsPerPage = 20
-  const totalPages = Math.ceil(totalCards / cardsPerPage)
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const startIndex = (currentPage - 1) * cardsPerPage
-  const endIndex = startIndex + cardsPerPage
-  const currentCards = Array.from({ length: totalCards }).slice(
-    startIndex,
-    endIndex
-  )
+    const locale = useLocale()
+    const cardsPerPage = 20
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const baseUrl =
+        process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:1248'
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page)
+    const { data: publications = [], isLoading } = useQuery({
+        queryKey: ['publications', activeTab],
+        queryFn: async () => {
+            const response = await api.get('/publication')
+            const filteredData = Array.isArray(response.data)
+                ? response.data.filter(
+                      (item: any) =>
+                          item.type?.toLowerCase() === activeTab?.toLowerCase()
+                  )
+                : []
+
+            return filteredData.reverse()
+        },
+    })
+
+    const totalCards = publications.length
+    const totalPages = Math.ceil(totalCards / cardsPerPage)
+    const startIndex = (currentPage - 1) * cardsPerPage
+    const endIndex = startIndex + cardsPerPage
+    const currentCards = publications.slice(startIndex, endIndex)
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page)
+        }
     }
-  }
 
-  const newsData = useQuery({
-    enabled: activeTab === 'news',
-    queryKey: ['news'],
-    queryFn: async () => {
-      const response = await api.get('/publication')
-      return response.data
-    },
-  })
+    const getLocalizedValue = (obj: any) => {
+        if (!obj) return ''
+        return (
+            obj[locale] || obj['uz'] || obj['en'] || Object.values(obj)[0] || ''
+        )
+    }
 
-  return (
-    <div>
-      <div></div>
+    const getImageUrl = (urlPath: string | undefined) => {
+        if (!urlPath) return placeholderImage
+        return `${baseUrl}${urlPath}`
+    }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-        {startIndex === 0 && (
-          <div className="md:col-span-2 relative">
-            <Link href="">
-              <div className="before:absolute before:inset-0 before:bg-black/50 before:z-10"></div>
-            </Link>
-            <div className="absolute bottom-5 left-5 right-5 text-white  z-15 p-5 ">
-              <p className=" p-2 text-white bg-gray-200/30 w-fit rounded">
-                18.11.2025, 11:38
-              </p>
-              <Link href="">
-                <h1 className="font-bold text-2xl">
-                  Today marks 34 years since the adoption of the Law..
-                </h1>
-              </Link>
+    const isVideo = (url: string | undefined) => {
+        if (!url) return false
+        const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov']
+        return videoExtensions.some((ext) => url.toLowerCase().endsWith(ext))
+    }
 
-              <p className="text-xl pt-2">
-                Our State Flag is a symbol of our national identity and one of
-                the main emblems that represents the name ...
-              </p>
+    if (isLoading)
+        return <div className="text-center py-10">Yuklanmoqda...</div>
+
+    return (
+        <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+                {startIndex === 0 && currentCards[0] && (
+                    <div className="md:col-span-2 relative h-[450px]">
+                        <Link href={`/admin/media/${currentCards[0].id}`}>
+                            <div className="absolute inset-0 bg-black/50 z-10 rounded-lg"></div>
+                            {isVideo(currentCards[0].url?.[0]) ? (
+                                <video
+                                    src={
+                                        getImageUrl(
+                                            currentCards[0].url?.[0]
+                                        ) as string
+                                    }
+                                    className="w-full h-full object-cover rounded-lg"
+                                    muted
+                                    loop
+                                    autoPlay
+                                />
+                            ) : (
+                                <Image
+                                    src={getImageUrl(currentCards[0].url?.[0])}
+                                    fill
+                                    unoptimized
+                                    alt={
+                                        getLocalizedValue(
+                                            currentCards[0].title
+                                        ) || 'No Title'
+                                    }
+                                    className="object-cover rounded-lg"
+                                />
+                            )}
+                        </Link>
+                        <div className="absolute bottom-5 left-5 right-5 text-white z-20 p-5">
+                            <p className="p-2 text-white bg-gray-200/30 w-fit rounded text-xs">
+                                {currentCards[0].createdAt
+                                    ? new Date(
+                                          currentCards[0].createdAt
+                                      ).toLocaleString(locale)
+                                    : '---'}
+                            </p>
+                            <Link href={`/admin/media/${currentCards[0].id}`}>
+                                <h1 className="font-bold text-2xl line-clamp-2 mt-2">
+                                    {getLocalizedValue(currentCards[0].title) ||
+                                        'No Title'}
+                                </h1>
+                            </Link>
+                            <div
+                                className="pt-2  line-clamp-3 text-sm **:bg-transparent! **:text-current! text-white wrap-anywhere"
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        getLocalizedValue(
+                                            currentCards[0].content
+                                        ) || 'No Content',
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {currentCards.map((item: any, index: number) => {
+                    if (startIndex === 0 && index === 0) return null
+
+                    return (
+                        <motion.div
+                            key={item.id || index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-100px' }}
+                            transition={{
+                                duration: 0.5,
+                                delay: index * 0.1,
+                                type: 'spring',
+                                stiffness: 300,
+                            }}
+                            className="flex flex-col"
+                            whileHover={{ scale: 1.02 }}
+                        >
+                            <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg relative">
+                                <Link href={`/admin/media/${item.id}`}>
+                                    {isVideo(item.url?.[0]) ? (
+                                        <video
+                                            src={
+                                                getImageUrl(
+                                                    item.url?.[0]
+                                                ) as string
+                                            }
+                                            className="w-full h-full object-cover rounded"
+                                            muted
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={getImageUrl(item.url?.[0])}
+                                            alt="news"
+                                            fill
+                                            unoptimized
+                                            className="object-cover rounded"
+                                        />
+                                    )}
+                                </Link>
+                            </div>
+                            <p className="pt-2 text-[#76767A] text-sm">
+                                {item.createdAt
+                                    ? new Date(item.createdAt).toLocaleString(
+                                          locale
+                                      )
+                                    : '---'}
+                            </p>
+                            <Link href={`/admin/media/${item.id}`}>
+                                <h2 className="font-bold text-lg mt-1 line-clamp-2">
+                                    {getLocalizedValue(item.title) ||
+                                        'No Title'}
+                                </h2>
+                            </Link>
+                            <div
+                                className="pt-2  line-clamp-3 text-sm **:bg-transparent! **:text-current! text-foreground/80 wrap-anywhere"
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        getLocalizedValue(item.content) ||
+                                        'No Content',
+                                }}
+                            />
+                        </motion.div>
+                    )
+                })}
             </div>
-            <Image src={placeholderImage} alt="" />
-          </div>
-        )}
-        {currentCards.map((_, index) => (
-          <motion.div
-            key={startIndex + index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.1,
-              type: 'spring',
-              stiffness: 300,
-            }}
-            className="flex flex-col"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
-              <Link href="">
-                <Image src={placeholderImage} alt="" className="mb-3 rounded" />
-              </Link>
-            </div>
-            <p className="pt-2 text-[#76767A] text-sm">18.11.2025, 11:38</p>
-            <Link href="">
-              <h2 className="font-bold text-lg mt-1 line-clamp-2">
-                Today marks 34 years since the adoption of the Law..
-              </h2>
-            </Link>
-            <p className="pt-2 text-gray-600 line-clamp-3">
-              Our State Flag is a symbol of our national identity and one of the
-              main emblems that represents the name ...
-            </p>
-          </motion.div>
-        ))}
-      </div>
 
-      <div className="mt-8 flex justify-center">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => handlePageChange(currentPage - 1)}
-                className={`cursor-pointer ${
-                  currentPage === 1 ? 'pointer-events-none opacity-50' : ''
-                }`}
-              />
-            </PaginationItem>
+            {totalPages > 1 && (
+                <div className="mt-8 flex justify-center">
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    onClick={() =>
+                                        handlePageChange(currentPage - 1)
+                                    }
+                                    className={`cursor-pointer ${
+                                        currentPage === 1
+                                            ? 'pointer-events-none opacity-50'
+                                            : ''
+                                    }`}
+                                />
+                            </PaginationItem>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-              if (
-                page === 1 ||
-                page === totalPages ||
-                (page >= currentPage - 1 && page <= currentPage + 1)
-              ) {
-                return (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(page)}
-                      isActive={page === currentPage}
-                      className="cursor-pointer"
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              }
-              if (
-                (page === currentPage - 2 && currentPage > 3) ||
-                (page === currentPage + 2 && currentPage < totalPages - 2)
-              ) {
-                return (
-                  <PaginationItem key={`ellipsis-${page}`}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )
-              }
-              return null
-            })}
+                            {Array.from(
+                                { length: totalPages },
+                                (_, i) => i + 1
+                            ).map((page) => {
+                                if (
+                                    page === 1 ||
+                                    page === totalPages ||
+                                    (page >= currentPage - 1 &&
+                                        page <= currentPage + 1)
+                                ) {
+                                    return (
+                                        <PaginationItem key={page}>
+                                            <PaginationLink
+                                                onClick={() =>
+                                                    handlePageChange(page)
+                                                }
+                                                isActive={page === currentPage}
+                                                className="cursor-pointer"
+                                            >
+                                                {page}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    )
+                                }
+                                if (
+                                    (page === currentPage - 2 &&
+                                        currentPage > 3) ||
+                                    (page === currentPage + 2 &&
+                                        currentPage < totalPages - 2)
+                                ) {
+                                    return (
+                                        <PaginationItem
+                                            key={`ellipsis-${page}`}
+                                        >
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )
+                                }
+                                return null
+                            })}
 
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => handlePageChange(currentPage + 1)}
-                className={`cursor-pointer ${
-                  currentPage === totalPages
-                    ? 'pointer-events-none opacity-50'
-                    : ''
-                }`}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
-  )
+                            <PaginationItem>
+                                <PaginationNext
+                                    onClick={() =>
+                                        handlePageChange(currentPage + 1)
+                                    }
+                                    className={`cursor-pointer ${
+                                        currentPage === totalPages
+                                            ? 'pointer-events-none opacity-50'
+                                            : ''
+                                    }`}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                </div>
+            )}
+        </div>
+    )
 }
 
 export default AdminNews

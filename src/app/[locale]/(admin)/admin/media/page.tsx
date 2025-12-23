@@ -1,4 +1,4 @@
-import AdminPublication from '@/components/admin/media/admin-media'
+import AdminPublication from '@/components/admin/media/admin-publication'
 import { cookies } from 'next/headers'
 
 const Page = async () => {
