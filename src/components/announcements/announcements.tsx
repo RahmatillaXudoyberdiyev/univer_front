@@ -80,18 +80,20 @@ const Announcements = () => {
                             <p className="text-[#76767A]">
                                 {item.createdAt
                                     ? new Date(item.createdAt).toLocaleDateString(locale, {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
+                                          year: 'numeric',
+                                          month: 'numeric',
+                                          day: 'numeric',
+
+                                          hour: 'numeric',
+                                          minute: 'numeric',
+                                          hour12: false,
                                       })
                                     : ''
                                 }
                             </p>
                             <Link href={`/publication/${item.id}`} onClick={handleLinkClick} >
                                 <p className="font-bold text-lg mb-6 line-clamp-2">
-                                    {getLocalizedValue(item.title)}
+                                    {getLocalizedValue(item.title) || t('Sarlavha mavjud emas')}
                                 </p>
                             </Link>
                         </div>

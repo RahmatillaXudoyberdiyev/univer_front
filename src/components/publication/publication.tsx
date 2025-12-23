@@ -26,7 +26,6 @@ const PublicationExtended = () => {
     const t = useTranslations()
     const baseUrl =
         process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:1248'
-        
 
     const [activeTab, setActiveTab] = useState(() => {
         return Cookies.get('publication-tab') || 'news'
@@ -246,7 +245,11 @@ const PublicationExtended = () => {
                                     WebkitBoxOrient: 'vertical',
                                 }}
                                 dangerouslySetInnerHTML={{
-                                    __html: getLocalizedValue(item.content),
+                                    __html:
+                                        getLocalizedValue(item.content) !==
+                                        '<p></p>'
+                                            ? getLocalizedValue(item.content)
+                                            : t('Tavsif mavjud emas'),
                                 }}
                             />
                         </motion.div>

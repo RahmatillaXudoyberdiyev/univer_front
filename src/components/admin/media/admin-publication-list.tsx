@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 import {
@@ -19,10 +19,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import placeholderImage from '../../../../public/image.png'
 
-const AdminNews = ({ activeTab }: { activeTab: string }) => {
+const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
     const locale = useLocale()
     const cardsPerPage = 20
     const [currentPage, setCurrentPage] = useState<number>(1)
+    const t = useTranslations()
     const baseUrl =
         process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:1248'
 
@@ -72,13 +73,13 @@ const AdminNews = ({ activeTab }: { activeTab: string }) => {
     }
 
     if (isLoading)
-        return <div className="text-center py-10">Yuklanmoqda...</div>
+        return <div className="text-center py-10">{t('Yuklanmoqda')}...</div>
 
     return (
         <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {startIndex === 0 && currentCards[0] && (
-                    <div className="md:col-span-2 relative h-[450px]">
+                    <div className="md:col-span-2 relative h-112.5">
                         <Link href={`/admin/media/${currentCards[0].id}`}>
                             <div className="absolute inset-0 bg-black/50 z-10 rounded-lg"></div>
                             {isVideo(currentCards[0].url?.[0]) ? (
@@ -101,7 +102,7 @@ const AdminNews = ({ activeTab }: { activeTab: string }) => {
                                     alt={
                                         getLocalizedValue(
                                             currentCards[0].title
-                                        ) || 'No Title'
+                                        ) || t('Sarlavha mavjud emas')
                                     }
                                     className="object-cover rounded-lg"
                                 />
@@ -112,13 +113,21 @@ const AdminNews = ({ activeTab }: { activeTab: string }) => {
                                 {currentCards[0].createdAt
                                     ? new Date(
                                           currentCards[0].createdAt
-                                      ).toLocaleString(locale)
+                                      ).toLocaleString(locale, {
+                                          year: 'numeric',
+                                          month: 'numeric',
+                                          day: 'numeric',
+
+                                          hour: 'numeric',
+                                          minute: 'numeric',
+                                          hour12: false,
+                                      })
                                     : '---'}
                             </p>
                             <Link href={`/admin/media/${currentCards[0].id}`}>
                                 <h1 className="font-bold text-2xl line-clamp-2 mt-2">
                                     {getLocalizedValue(currentCards[0].title) ||
-                                        'No Title'}
+                                        t('Sarlavha mavjud emas')}
                                 </h1>
                             </Link>
                             <div
@@ -127,7 +136,11 @@ const AdminNews = ({ activeTab }: { activeTab: string }) => {
                                     __html:
                                         getLocalizedValue(
                                             currentCards[0].content
-                                        ) || 'No Content',
+                                        ) !== '<p></p>'
+                                            ? getLocalizedValue(
+                                                  currentCards[0].content
+                                              )
+                                            : t('Tavsif mavjud emas'),
                                 }}
                             />
                         </div>
@@ -185,15 +198,17 @@ const AdminNews = ({ activeTab }: { activeTab: string }) => {
                             <Link href={`/admin/media/${item.id}`}>
                                 <h2 className="font-bold text-lg mt-1 line-clamp-2">
                                     {getLocalizedValue(item.title) ||
-                                        'No Title'}
+                                        t('Sarlavha mavjud emas')}
                                 </h2>
                             </Link>
                             <div
                                 className="pt-2  line-clamp-3 text-sm **:bg-transparent! **:text-current! text-foreground/80 wrap-anywhere"
                                 dangerouslySetInnerHTML={{
                                     __html:
-                                        getLocalizedValue(item.content) ||
-                                        'No Content',
+                                        getLocalizedValue(item.content) !==
+                                        '<p></p>'
+                                            ? getLocalizedValue(item.content)
+                                            : t('Tavsif mavjud emas'),
                                 }}
                             />
                         </motion.div>
@@ -279,4 +294,4 @@ const AdminNews = ({ activeTab }: { activeTab: string }) => {
     )
 }
 
-export default AdminNews
+export default AdminPublicationList

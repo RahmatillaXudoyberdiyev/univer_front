@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
 
 interface Official {
@@ -65,6 +66,7 @@ const regionData: { [key: string]: RegionGroup } = {
 
 const RegionalSection = () => {
     const [activeRegion, setActiveRegion] = useState('kattakurganskiy-rayon')
+    const t = useTranslations()
 
     const handleRegionClick = (e: React.MouseEvent<SVGPathElement>) => {
         const id = e.currentTarget.id
@@ -80,7 +82,7 @@ const RegionalSection = () => {
         <section className="container-cs py-12">
             <div className="flex justify-between items-center pb-5">
                 <h1 className="font-bold text-2xl mb-6 pb-2 border-b-2 border-[#2B2B7A] w-fit ">
-                    Hududiy bo'linmalar
+                    {t("Hududiy bolinmalar")}
                 </h1>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-12 md:gap-8 items-center">

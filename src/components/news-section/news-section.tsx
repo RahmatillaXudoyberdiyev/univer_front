@@ -117,7 +117,15 @@ const NewsSection = () => {
                                     {firstNews.createdAt
                                         ? new Date(
                                               firstNews.createdAt
-                                          ).toLocaleString(locale)
+                                          ).toLocaleString(locale, {
+                                              day: 'numeric',
+                                              month: 'numeric',
+                                              year: 'numeric',
+
+                                              hour: 'numeric',
+                                              minute: 'numeric',
+                                              hour12: false,
+                                          })
                                         : ''}
                                 </p>
                                 <Link
@@ -125,15 +133,21 @@ const NewsSection = () => {
                                     onClick={setNewsTab}
                                 >
                                     <h1 className="font-bold text-2xl line-clamp-2 mt-2">
-                                        {getLocalizedValue(firstNews.title)}
+                                        {getLocalizedValue(firstNews.title) ||
+                                            t('Sarlavha mavjud emas')}
                                     </h1>
                                 </Link>
                                 <div
                                     className="text-xl pt-2 line-clamp-2 text-white/90 **:bg-transparent! **:text-current!"
                                     dangerouslySetInnerHTML={{
-                                        __html: getLocalizedValue(
-                                            firstNews.content
-                                        ),
+                                        __html:
+                                            getLocalizedValue(
+                                                firstNews.content
+                                            ) !== '<p></p>'
+                                                ? getLocalizedValue(
+                                                      firstNews.content
+                                                  )
+                                                : t('Tavsif mavjud emas'),
                                     }}
                                 />
                             </div>
@@ -170,7 +184,16 @@ const NewsSection = () => {
                             <p className="py-3 text-[#76767A] text-sm">
                                 {item.createdAt
                                     ? new Date(item.createdAt).toLocaleString(
-                                          locale
+                                          locale,
+                                          {
+                                              day: 'numeric',
+                                              month: 'numeric',
+                                              year: 'numeric',
+
+                                              hour: 'numeric',
+                                              minute: 'numeric',
+                                              hour12: false,
+                                          }
                                       )
                                     : ''}
                             </p>
@@ -179,7 +202,8 @@ const NewsSection = () => {
                                 onClick={setNewsTab}
                             >
                                 <h1 className="font-bold line-clamp-2">
-                                    {getLocalizedValue(item.title)}
+                                    {getLocalizedValue(item.title) ||
+                                        t('Sarlavha mavjud emas')}
                                 </h1>
                             </Link>
 
@@ -191,7 +215,11 @@ const NewsSection = () => {
                                     WebkitBoxOrient: 'vertical',
                                 }}
                                 dangerouslySetInnerHTML={{
-                                    __html: getLocalizedValue(item.content),
+                                    __html:
+                                        getLocalizedValue(item.content) !==
+                                        '<p></p>'
+                                            ? getLocalizedValue(item.content)
+                                            : t('Tavsif mavjud emas'),
                                 }}
                             />
                         </motion.div>

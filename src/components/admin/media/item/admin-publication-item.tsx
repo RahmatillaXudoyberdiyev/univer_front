@@ -10,8 +10,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
+import { useTranslations } from 'next-intl'
+
 const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
     const locale = useLocale()
+    const t = useTranslations()
     const baseUrl =
         process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:1248'
     const [activeMedia, setActiveMedia] = useState<string | null>(null)
@@ -66,7 +69,7 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
     if (!post)
         return (
             <div className="text-center py-20 font-medium text-muted-foreground">
-                Ma&apos;lumot topilmadi
+                {t("Malumot topilmadi")}
             </div>
         )
 
@@ -75,14 +78,15 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
     const fullDate = post.createdAt
         ? new Date(post.createdAt).toLocaleDateString(locale, {
               day: 'numeric',
-              month: 'long',
+              month: 'numeric',
               year: 'numeric',
           })
         : '---'
     const time = post.createdAt
         ? new Date(post.createdAt).toLocaleTimeString(locale, {
-              hour: '2-digit',
-              minute: '2-digit',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: false,
           })
         : ''
 
@@ -100,7 +104,7 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
                         className="hover:bg-accent rounded-full pl-2 pr-5 group transition-colors"
                     >
                         <ChevronLeft className="mr-1 h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                        Orqaga
+                        {t("Orqaga")}
                     </Button>
                 </Link>
                 <Button
@@ -191,7 +195,7 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
                 <div className="lg:col-span-8 w-full max-w-full overflow-hidden">
-                    <article className="prose prose-zinc dark:prose-invert max-w-none">
+                    <article className="prose prose-zinc dark:prose-invert max-w-none text-justify">
                         {(content && content !== '<p></p>' && (
                             <div
                                 dangerouslySetInnerHTML={{

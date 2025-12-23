@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
@@ -16,11 +17,12 @@ const links = [
 ]
 
 const UsefulLinks = () => {
+    const t = useTranslations()
     return (
         <div className="container-cs py-12">
             <div className="flex items-center justify-between mb-8">
                 <h2 className="font-bold text-2xl pb-2 border-b-2 border-[#2B2B7A] w-fit">
-                    Foydali havolalar
+                    {t("Foydali havolalar")}
                 </h2>
             </div>
 
@@ -36,7 +38,7 @@ const UsefulLinks = () => {
                 }}
                 autoplay={{ delay: 4000, pauseOnMouseEnter: true }}
                 loop
-                className="useful-links-swiper !pb-12"
+                className="useful-links-swiper pb-12!"
             >
                 {links.map((link, index) => {
                     const imageName = link.title.toLowerCase() + '.png';

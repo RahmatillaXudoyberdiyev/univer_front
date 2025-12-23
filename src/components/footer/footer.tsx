@@ -14,10 +14,11 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import logo from '../../../public/logo.png'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 const Footer = () => {
     const locale = useLocale()
+    const t = useTranslations()
     const detailsData = useQuery({
         queryKey: ['details'],
         queryFn: async () => {
@@ -48,18 +49,12 @@ const Footer = () => {
                             </h1>
                         </div>
                         <p className=" text-white/70 text-center md:text-left max-w-lg leading-relaxed">
-                            Barcha huquqlar himoyalangan. Saytdagi barcha
-                            huquqlar O'zbekiston Respublikasi qonunlariga, shu
-                            jumladan mualliflik huquqi va turdosh huquqlarga
-                            muvofiq himoya qilinadi. Sayt materiallaridan
-                            foydalanganda, Samarqand viloyati Investitsiyalar,
-                            sanoat va savdo boshqarmasi saytiga havola
-                            ko'rsatilishi shart.
+                            {t('footer-desc')}
                         </p>
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        <h2 className="text-2xl font-bold">Aloqa</h2>
+                        <h2 className="text-2xl font-bold">{t("Aloqa")}</h2>
 
                         <div className="space-y-5 text-white/90">
                             <div className="flex items-center gap-4">
@@ -113,7 +108,7 @@ const Footer = () => {
                         </div>
 
                         <div>
-                            <h3 className="font-bold mb-2">Ish vaqti:</h3>
+                            <h3 className="font-bold mb-2">{t('Ish vaqti')}:</h3>
                             <p className="text-base text-white/80">
                                 {
                                     detailsData.data?.workingHours[locale]
@@ -121,10 +116,9 @@ const Footer = () => {
                             </p>
                         </div>
 
-                        {/* Integrated Socials */}
                         <div className="pt-4">
                             <p className="text-[10px] text-white/40 uppercase tracking-[2px] mb-4">
-                                Ijtimoiy tarmoqlar
+                                {t("Ijtimoiy tarmoqlar")}
                             </p>
                             <div className="flex justify-start gap-3">
                                 <SocialIcon
