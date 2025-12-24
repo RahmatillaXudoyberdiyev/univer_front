@@ -5,6 +5,7 @@ import {
   BoldItalicUnderlineToggles,
   Button,
   CreateLink,
+  imagePlugin,
   InsertCodeBlock,
   InsertImage,
   InsertTable,
@@ -12,6 +13,7 @@ import {
   ListsToggle,
   MDXEditor,
   MDXEditorMethods,
+  Separator,
   toolbarPlugin,
   UndoRedo,
 } from '@mdxeditor/editor'
@@ -19,6 +21,7 @@ import '@mdxeditor/editor/style.css'
 import React, { useRef, useState } from 'react'
 
 // Barcha bepul pluginlarni import qilamiz
+import { api, baseBackendUrl } from '@/models/axios'
 import {
   AdmonitionDirectiveDescriptor,
   codeBlockPlugin,
@@ -27,14 +30,11 @@ import {
   directivesPlugin,
   frontmatterPlugin,
   headingsPlugin,
-  imagePlugin,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
   markdownShortcutPlugin,
   quotePlugin,
-  sandpackPlugin,
-  Separator, // Toolbar uchun ajratuvchi
   tablePlugin,
   thematicBreakPlugin,
 } from '@mdxeditor/editor'
@@ -44,19 +44,6 @@ const Editor: React.FC = () => {
 
 Bu **MDX** editorning to'liq bepul featurelari bilan ishlaydigan versiyasi.
 
-- Ro'yxatlar
-- Jadval
-- Kod bloklari
-- Rasmlar
-- va boshqalar...
-
-\`\`\`jsx
-import React from 'react';
-
-export const MyComponent = () => <div>MDX ichida JSX!</div>;
-\`\`\`
-
-<MyComponent />
 `)
 
   const editorRef = useRef<MDXEditorMethods>(null)
@@ -64,17 +51,45 @@ export const MyComponent = () => <div>MDX ichida JSX!</div>;
   const handleSave = () => {
     const currentMarkdown = editorRef.current?.getMarkdown()
     if (currentMarkdown) {
-      // Bu yerda saqlash logikasi: masalan, API ga yuborish, localStorage ga saqlash yoki console ga chiqarish
       console.log('Saqlangan MDX/Markdown:', currentMarkdown)
       alert('MDX muvaffaqiyatli saqlandi!\n\n' + currentMarkdown)
-      // Misol uchun localStorage ga saqlash:
-      // localStorage.setItem('savedMDX', currentMarkdown);
     }
   }
 
+  // Image upload handler - bu yerda siz o'zingizning serveringizga upload qilasiz
+  const imageUploadHandler = async (image: File): Promise<string> => {
+    // Misol uchun: serverga yuklash
+    const formData = new FormData()
+    formData.append('file', image)
+
+    try {
+      // O'zingizning API endpoint'ingizni qo'ying, masalan: /api/upload-image
+      console.log('Uploading image:', image)
+
+      const response = await api.post('/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      const uploadPath = response.data?.uploadPath
+      return `${baseBackendUrl}/${uploadPath}`
+    } catch (error) {
+      console.error('Image upload error:', error)
+      alert('Rasm yuklashda xato yuz berdi!')
+      // Xato bo'lsa placeholder URL qaytarish mumkin
+      return 'https://via.placeholder.com/150?text=Upload+Failed'
+    }
+  }
+
+  // Demo uchun: real upload o'rniga placeholder URL qaytarish
+  // const imageUploadHandler = async (image: File) => {
+  //   console.log('Yuklanayotgan rasm:', image.name)
+  //   // 2 sekund kutib, placeholder qaytarish
+  //   await new Promise(resolve => setTimeout(resolve, 2000))
+  //   return `https://picsum.photos/seed/${image.name}/800/600`
+  // }
+
   return (
     <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <h1>MDX Editor (Barcha bepul featurelar + Saqlash tugmasi)</h1>
+      <h1>MDX Editor (Image Upload + Saqlash tugmasi)</h1>
 
       <MDXEditor
         ref={editorRef}
@@ -89,20 +104,32 @@ export const MyComponent = () => <div>MDX ichida JSX!</div>;
           tablePlugin(),
           linkPlugin(),
           linkDialogPlugin(),
-          imagePlugin(),
+          // Image plugin - upload handler bilan
+          imagePlugin({
+            imageUploadHandler, // Bu funksiya yuklangan rasm uchun URL qaytaradi
+            // imageAutocompleteSuggestions: ['https://via.placeholder.com/150', 'https://picsum.photos/200'],
+          }),
           frontmatterPlugin(),
           codeBlockPlugin(),
-          codeMirrorPlugin(),
+          codeMirrorPlugin({
+            codeBlockLanguages: {
+              js: 'JavaScript',
+              jsx: 'JSX',
+              ts: 'TypeScript',
+              tsx: 'TSX',
+              css: 'CSS',
+              html: 'HTML',
+            },
+          }),
           directivesPlugin({
             directiveDescriptors: [AdmonitionDirectiveDescriptor],
           }),
           diffSourcePlugin({
+            diffMarkdown: 'An older version',
             viewMode: 'rich-text',
-            diffMarkdown: '# Eski versiya',
           }),
-          sandpackPlugin(),
 
-          // Toolbar plugin - custom toolbar bilan
+          // Toolbar plugin
           toolbarPlugin({
             toolbarContents: () => (
               <>
@@ -114,14 +141,13 @@ export const MyComponent = () => <div>MDX ichida JSX!</div>;
                 <ListsToggle />
                 <Separator />
                 <CreateLink />
-                <InsertImage />
+                <InsertImage /> {/* Bu tugma endi upload dialog ochadi */}
                 <Separator />
                 <InsertTable />
                 <InsertThematicBreak />
                 <InsertCodeBlock />
                 <Separator />
-
-                {/* Custom Saqlash tugmasi */}
+                {/* Saqlash tugmasi */}
                 <Button onClick={handleSave} title="Saqlash">
                   💾 Saqlash
                 </Button>
@@ -130,20 +156,6 @@ export const MyComponent = () => <div>MDX ichida JSX!</div>;
           }),
         ]}
       />
-
-      <div style={{ marginTop: '20px' }}>
-        <h2>Joriy Markdown (real-time):</h2>
-        <pre
-          style={{
-            background: '#f0f0f0',
-            padding: '10px',
-            borderRadius: '4px',
-            whiteSpace: 'pre-wrap',
-          }}
-        >
-          {markdown}
-        </pre>
-      </div>
     </div>
   )
 }
