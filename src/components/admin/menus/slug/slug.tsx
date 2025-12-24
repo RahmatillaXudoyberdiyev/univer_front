@@ -42,7 +42,7 @@ const Slug = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['menus'],
+        queryKey: ['submenus'],
       })
       setOpen(false)
       setEditing(null)
@@ -118,12 +118,6 @@ const Slug = () => {
       //   render: (s: boolean) =>
       //     !s ? <X color="red" /> : <Check color="green" />,
       // },
-      {
-        title: t('Submenular soni'),
-        dataIndex: 'submenus',
-        key: 'submenus',
-        render: (s: Record<string, any>[]) => s.length,
-      },
       {
         title: t('Actions'),
         dataIndex: 'slug',
@@ -218,6 +212,7 @@ const Slug = () => {
             nameRu: '',
             nameEn: '',
             slug: '',
+            order: 1,
           })
         }}
       >
@@ -243,6 +238,7 @@ const Slug = () => {
                       en: values.en,
                     } as any,
                     slug: values.slug,
+                    order: +values.order,
                   } as any,
                 })
               } else {
@@ -254,6 +250,7 @@ const Slug = () => {
                     en: values.en,
                   },
                   slug: values.slug,
+                  order: +values.order,
                   menu: { connect: { slug: slug } },
                 })
               }
