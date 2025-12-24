@@ -15,38 +15,29 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, Pencil, Trash } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useParams, usePathname } from 'next/navigation'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-const AdminMenus = () => {
+const Slug = () => {
   const t = useTranslations()
   const [open, setOpen] = useState<boolean>(false)
   const [editing, setEditing] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const pathname = usePathname()
   const form = useForm()
-
-  const menus = useQuery({
-    queryKey: ['menus'],
+  const { slug } = useParams()
+  const data = useQuery({
+    queryKey: ['submenus', slug],
     queryFn: async () => {
-      const res = await api.get('/menu')
-      return res.data
-    },
-  })
-
-  const menu = useQuery({
-    enabled: !!editing,
-    queryKey: ['menu', editing],
-    queryFn: async () => {
-      const res = await api.get(`/menu/${editing}`)
+      const res = await api.get(`/sub-menu/${slug}`)
       return res.data
     },
   })
 
   const createMenu = useMutation({
     mutationFn: async (data: Record<string, any>) => {
-      const res = await api.post('/menu/create', data)
+      const res = await api.post('/sub-menu/create', data)
       return res.data
     },
     onSuccess: async () => {
@@ -73,12 +64,12 @@ const AdminMenus = () => {
       id: string
       data: Record<string, any>
     }) => {
-      const res = await api.patch(`/menu/update/${id}`, data)
+      const res = await api.patch(`/sub-menu/update/${id}`, data)
       return res.data
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['menus'],
+        queryKey: ['submenus'],
       })
       setOpen(false)
 
@@ -188,32 +179,25 @@ const AdminMenus = () => {
         name: 'slug',
         type: 'text',
       },
+      {
+        label: t('Order'),
+        name: 'order',
+        type: 'number',
+      },
     ],
     [t]
   )
-
-  useEffect(() => {
-    if (editing) {
-      form.reset({
-        uz: menu.data?.name?.uz,
-        oz: menu.data?.name?.oz,
-        ru: menu.data?.name?.ru,
-        en: menu.data?.name?.en,
-        slug: menu.data?.slug,
-      })
-    }
-  }, [editing, menu.data])
 
   return (
     <div className="p-4">
       <MyTable
         columns={columns}
-        dataSource={menus.data}
+        dataSource={data.data}
         rangepickerFilter={false}
         exportExcel={false}
         showIndexColumn
         showDataCount={false}
-        isLoading={menus.isLoading}
+        isLoading={data.isLoading}
         header={
           <div>
             <Button size={'sm'} onClick={() => setOpen(true)}>
@@ -270,6 +254,7 @@ const AdminMenus = () => {
                     en: values.en,
                   },
                   slug: values.slug,
+                  menu: { connect: { slug: slug } },
                 })
               }
             }}
@@ -280,4 +265,4 @@ const AdminMenus = () => {
   )
 }
 
-export default AdminMenus
+export default Slug
