@@ -1,3 +1,4 @@
+import { baseBackendUrl } from '@/models/axios'
 import { getTranslations } from 'next-intl/server'
 import { cookies } from 'next/headers'
 
@@ -8,9 +9,9 @@ export async function generateMetadata({
 }) {
   const { menu } = await params
   const t = await getTranslations()
-  const menuData = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/menu`
-  ).then((res) => res.json())
+  const menuData = await fetch(`${baseBackendUrl}/menu`).then((res) =>
+    res.json()
+  )
   const store = await cookies()
   const locale = store.get('locale')?.value || 'uz'
   const titleLocalized = menuData.find((item: any) => item.slug === menu).name[
