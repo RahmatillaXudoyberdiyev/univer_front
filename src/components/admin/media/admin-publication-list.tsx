@@ -1,9 +1,17 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 
+import { Button } from '@/components/ui/button'
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogTrigger,
+} from '@/components/ui/dialog'
 import {
     Pagination,
     PaginationContent,
@@ -21,6 +29,7 @@ import placeholderImage from '../../../../public/image.png'
 
 const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
     const locale = useLocale()
+    const queryClient = useQueryClient()
     const cardsPerPage = 20
     const [currentPage, setCurrentPage] = useState<number>(1)
     const t = useTranslations()
@@ -39,6 +48,17 @@ const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
                 : []
 
             return filteredData.reverse()
+        },
+    })
+
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await api.delete(`/publication/delete/${id}`)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['publications', activeTab],
+            })
         },
     })
 
@@ -80,6 +100,43 @@ const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {startIndex === 0 && currentCards[0] && (
                     <div className="md:col-span-2 relative h-112.5">
+                        <div className="absolute top-2 right-2 z-50">
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        variant="destructive"
+                                        className="z-50 cursor-pointer"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <p className="mb-4">
+                                        Rostdan o‘chirmoqchimisiz?
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="destructive"
+                                            onClick={() =>
+                                                deleteMutation.mutate(
+                                                    currentCards[0].id
+                                                )
+                                            }
+                                        >
+                                            Ha, o‘chirish
+                                        </Button>
+                                        <DialogClose asChild>
+                                            <Button variant="outline">
+                                                Bekor qilish
+                                            </Button>
+                                        </DialogClose>
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                         <Link href={`/admin/media/${currentCards[0].id}`}>
                             <div className="absolute inset-0 bg-black/50 z-10 rounded-lg"></div>
                             {isVideo(currentCards[0].url?.[0]) ? (
@@ -117,7 +174,6 @@ const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
                                           year: 'numeric',
                                           month: 'numeric',
                                           day: 'numeric',
-
                                           hour: 'numeric',
                                           minute: 'numeric',
                                           hour12: false,
@@ -131,7 +187,7 @@ const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
                                 </h1>
                             </Link>
                             <div
-                                className="pt-2  line-clamp-3 text-sm **:bg-transparent! **:text-current! text-white wrap-anywhere"
+                                className="pt-2 line-clamp-3 text-sm **:bg-transparent! **:text-current! text-white wrap-anywhere"
                                 dangerouslySetInnerHTML={{
                                     __html:
                                         getLocalizedValue(
@@ -162,9 +218,46 @@ const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
                                 type: 'spring',
                                 stiffness: 300,
                             }}
-                            className="flex flex-col"
+                            className="flex flex-col relative"
                             whileHover={{ scale: 1.02 }}
                         >
+                            <div className="absolute top-2 right-2 z-50">
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button
+                                            variant="destructive"
+                                            className="z-50 cursor-pointer"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <Trash2 />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <p className="mb-4">
+                                            Rostdan o‘chirmoqchimisiz?
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                variant="destructive"
+                                                onClick={() =>
+                                                    deleteMutation.mutate(
+                                                        item.id
+                                                    )
+                                                }
+                                            >
+                                                Ha, o‘chirish
+                                            </Button>
+                                            <DialogClose asChild>
+                                                <Button variant="outline">
+                                                    Bekor qilish
+                                                </Button>
+                                            </DialogClose>
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                             <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg relative">
                                 <Link href={`/admin/media/${item.id}`}>
                                     {isVideo(item.url?.[0]) ? (
@@ -202,7 +295,7 @@ const AdminPublicationList = ({ activeTab }: { activeTab: string }) => {
                                 </h2>
                             </Link>
                             <div
-                                className="pt-2  line-clamp-3 text-sm **:bg-transparent! **:text-current! text-foreground/80 wrap-anywhere"
+                                className="pt-2 line-clamp-3 text-sm **:bg-transparent! **:text-current! text-foreground/80 wrap-anywhere"
                                 dangerouslySetInnerHTML={{
                                     __html:
                                         getLocalizedValue(item.content) !==

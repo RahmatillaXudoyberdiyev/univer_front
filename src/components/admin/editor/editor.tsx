@@ -15,6 +15,7 @@ import {
     ListsToggle,
     markdownShortcutPlugin,
     MDXEditor,
+    MDXEditorMethods,
     quotePlugin,
     Separator,
     StrikeThroughSupSubToggles,
@@ -41,7 +42,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 
 const AdminEditor = () => {
-    const editorRef = useRef(null)
+    const editorRef = useRef<MDXEditorMethods>(null)
     const fileInputRef = useRef(null)
     const [markdown, setMarkdown] = useState('## Admin panelga xush kelibsiz')
     const [previewMode, setPreviewMode] = useState(false)
@@ -123,7 +124,7 @@ const AdminEditor = () => {
         if (file) {
             const reader = new FileReader()
             reader.onload = (e) => {
-                setMarkdown(e.target?.result || '')
+                setMarkdown(e.target?.result as string || '' )
             }
             reader.readAsText(file)
         }
@@ -271,7 +272,7 @@ const AdminEditor = () => {
                                         <ZoomOut size={18} />
                                     </button>
                                     <span
-                                        className={`text-xs sm:text-sm min-w-[3rem] text-center ${
+                                        className={`text-xs sm:text-sm min-w-12 text-center ${
                                             isDarkMode
                                                 ? 'text-gray-300'
                                                 : 'text-gray-700'

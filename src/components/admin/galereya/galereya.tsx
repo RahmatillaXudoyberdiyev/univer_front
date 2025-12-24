@@ -89,7 +89,6 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
 
       const formData = new FormData()
 
-      // 👇 backendda field name 'files' bo‘lishi kerak
       files.forEach((file) => {
         formData.append('files', file)
       })
@@ -155,7 +154,7 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 max-h-[650px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 max-h-162.5">
           {activeTab === 'rasmlar' &&
             images.data?.data?.map((item: Record<string, any>) => (
               <motion.div
@@ -218,17 +217,15 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
         </div>
 
         <div className="flex justify-center items-center gap-3">
-          {/* First page button */}
           <Button
             variant="outline"
             size="icon"
             onClick={() => setPage(1)}
-            disabled={page === 1} // birinchi sahifada disable
+            disabled={page === 1}
           >
             <ChevronsLeft />
           </Button>
 
-          {/* Previous page button */}
           <Button
             variant="outline"
             size="icon"
@@ -237,12 +234,11 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
                 setPage(page - 1)
               }
             }}
-            disabled={page === 1} // birinchi sahifada disable
+            disabled={page === 1}
           >
             <ChevronLeft />
           </Button>
 
-          {/* Page input */}
           <Input
             disabled={totalPages === 1}
             type="number"
@@ -251,7 +247,6 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
             onChange={(e) => setPage(Number(e.target.value))}
           />
 
-          {/* Next page button */}
           <Button
             variant="outline"
             size="icon"
@@ -260,17 +255,16 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
                 setPage(page + 1)
               }
             }}
-            disabled={page === totalPages} // oxirgi sahifada disable
+            disabled={page === totalPages}
           >
             <ChevronRight />
           </Button>
 
-          {/* Last page button */}
           <Button
             variant="outline"
             size="icon"
             onClick={() => setPage(totalPages)}
-            disabled={page === totalPages} // oxirgi sahifada disable
+            disabled={page === totalPages}
           >
             <ChevronsRight />
           </Button>
@@ -366,7 +360,7 @@ const Galereya = ({ tab }: { tab: 'rasmlar' | 'videolar' | undefined }) => {
                     const newFiles = Array.from(e.target.files)
                     setFiles((prev) => {
                       const merged = [...prev, ...newFiles]
-                      return merged.slice(0, 25) // 👈 maksimal 6 ta fayl
+                      return merged.slice(0, 25)
                     })
                   }
                 }}

@@ -134,7 +134,7 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
                     </div>
                 </div>
 
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground leading-[1.1] mb-4 break-words whitespace-normal">
+                <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground leading-[1.1] mb-4  wrap-anywhere whitespace-normal">
                     {title || 'Sarlavha kiritilmagan'}
                 </h1>
             </div>
@@ -246,7 +246,7 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
 
                         <div className="p-8 rounded-[2rem] bg-[#0A0A3D] text-background border-2 border-slate-200">
                             <h4 className="font-black text-lg mb-2 dark:text-white">
-                                Obuna bo&apos;ling
+                                Obuna bo'ling
                             </h4>
                             <p className="text-xs font-medium text-background/70 mb-6 leading-relaxed dark:text-white">
                                 Eng so&apos;nggi texnologik yangiliklarni

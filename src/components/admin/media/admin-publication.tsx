@@ -14,7 +14,7 @@ import useNotify from '@/hooks/use-notify'
 import { api } from '@/models/axios'
 import { useQueryClient } from '@tanstack/react-query'
 import Cookies from 'js-cookie'
-import { Plus, PlusCircle, Upload, X } from 'lucide-react'
+import { PlusCircle, Upload, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -182,7 +182,7 @@ const AdminPublication = ({
             <Dialog open={addModalOpen} onOpenChange={handleModalClose}>
                 <DialogContent className="md:max-w-5xl flex flex-col h-[85vh] overflow-hidden p-0">
                     <DialogHeader className="p-6 pb-0">
-                        <DialogTitle className='flex  items-center gap-2'>
+                        <DialogTitle className="flex  items-center gap-2">
                             {' '}
                             <PlusCircle /> {t('Yangi')} {activeTab}
                         </DialogTitle>
@@ -195,14 +195,14 @@ const AdminPublication = ({
                     >
                         <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
                             <div className="space-y-4">
-                                <Label>{t("Media fayllar")}</Label>
+                                <Label>{t('Media fayllar')}</Label>
                                 <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
                                     <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
                                     <label
                                         htmlFor="file-upload"
                                         className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-secondary cursor-pointer"
                                     >
-                                        {t("Fayl tanlash")}
+                                        {t('Fayl tanlash')}
                                     </label>
                                     <input
                                         id="file-upload"
@@ -250,7 +250,7 @@ const AdminPublication = ({
                             </div>
 
                             <div className="space-y-4">
-                                <Label>{t("Sarlavha va kontent")}</Label>
+                                <Label>{t('Sarlavha va kontent')}</Label>
                                 <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
                                     {(
                                         ['uz', 'oz', 'ru', 'en'] as Language[]
@@ -325,7 +325,7 @@ const AdminPublication = ({
                                 disabled={isSubmitting}
                                 onClick={() => handleModalClose(false)}
                             >
-                                {t("Bekor qilish")}
+                                {t('Bekor qilish')}
                             </Button>
                             <Button
                                 type="submit"

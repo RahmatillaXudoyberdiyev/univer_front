@@ -204,7 +204,7 @@ const AdminGalereya = ({
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 max-h-[650px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 max-h-162.5">
                     {activeTab === 'rasmlar' &&
                         images.data?.data?.map((item: Record<string, any>) => (
                             <motion.div
@@ -508,7 +508,7 @@ const AdminGalereya = ({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setPreviewVideoId(null)}
-                        className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+                        className="fixed inset-0 z-1000 flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
                         style={{ pointerEvents: 'auto' }}
                     >
                         <motion.div

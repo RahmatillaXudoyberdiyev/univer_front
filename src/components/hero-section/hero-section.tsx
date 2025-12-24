@@ -111,7 +111,7 @@ const HeroSection = () => {
                                     >
                                         <Button
                                             variant="default"
-                                            className="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-6 text-lg rounded-md"
+                                            className="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-6 text-lg rounded-md cursor-pointer"
                                         >
                                             {t("Batafsil")}
                                         </Button>

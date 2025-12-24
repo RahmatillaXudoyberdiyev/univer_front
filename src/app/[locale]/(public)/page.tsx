@@ -6,8 +6,6 @@ import RegionalSection from '@/components/regional-section/regional-section'
 import StatisticsSection from '@/components/statistics-section/statistics-section'
 import UsefulLinks from '@/components/useful-links/useful-links'
 import { getTranslations } from 'next-intl/server'
-import mainImg from '../../../../public/image.png'
-import Chatbot from '@/components/chatbot/chatbot'
 
 export async function generateMetadata({
     params,
@@ -26,16 +24,9 @@ export async function generateMetadata({
 }
 
 export default function Home() {
-    const slides = Array.from({ length: 10 }).map((_, i) => ({
-        id: i,
-        title: 'Davlat fuqarolik xizmatchilari uchun navbatdagi "Siyosiy-ma’rifat soati" tashkil etildi',
-        date: '05.12.2025',
-        image: mainImg,
-    }))
-
     return (
         <div>
-            <HeroSection slides={slides} />
+            <HeroSection />
             <NewsSection />
             <StatisticsSection />
             <Announcements />

@@ -20,7 +20,6 @@ import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-/* -------------------- CONSTANTS -------------------- */
 
 const LANGUAGES = [
     { key: 'uz', label: "O'zbekcha" },
@@ -29,7 +28,6 @@ const LANGUAGES = [
     { key: 'en', label: 'English' },
 ] as const
 
-/* -------------------- SCHEMA -------------------- */
 
 const formSchema = z.object({
     receptionPhone: z.string().min(1, 'Reception phone majburiy'),
@@ -134,7 +132,6 @@ const MainDetails = () => {
             onSubmit={form.handleSubmit(onSubmit, onError)}
             className="container-cs py-10 space-y-6"
         >
-            {/* HEADER */}
             <div className="flex justify-between items-end border-b pb-6">
                 <div>
                     <h1 className="text-2xl font-bold">General Settings</h1>
@@ -156,7 +153,6 @@ const MainDetails = () => {
                 </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
-                {/* CONTACT */}
                 <Card className="row-span-2">
                     <CardHeader>
                         <CardTitle>Contact Channels</CardTitle>
@@ -270,7 +266,6 @@ const MainDetails = () => {
                     </CardContent>
                 </Card>
 
-                {/* WORKING HOURS */}
                 <Card className="col-span-2">
                     <CardHeader>
                         <CardTitle>Working Hours</CardTitle>
