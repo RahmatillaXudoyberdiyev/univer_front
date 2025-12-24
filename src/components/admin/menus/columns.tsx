@@ -105,7 +105,7 @@ export const useColumns = (): ColumnDef<Menus>[] => {
         },
         {
             accessorKey: 'slug',
-            header: t('Slug'),
+            header: t('Path name'),
             cell: ({ row }) => {
                 const slug = row.original.slug
                 return slug

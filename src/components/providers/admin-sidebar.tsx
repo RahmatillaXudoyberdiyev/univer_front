@@ -41,7 +41,7 @@ export async function AdminSidebar() {
     }))
 
     const items = [
-        { title: t("Asosiy ma'lumotlar"), url: '/admin', icon: Database },
+        { title: t("Asosiy malumotlar"), url: '/admin', icon: Database },
         {
             title: t('Sahifalar boshqaruvi'),
             url: '/admin/menus',
