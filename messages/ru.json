@@ -58,5 +58,14 @@
     "Galereya": "Галерея",
     "Path name": "Имя пути",
     "Created Date": "Дата создания",
-    "Updated Date": "Дата обновления"
+    "Updated Date": "Дата обновления",
+    "Name UZ": "Название UZ",
+    "Name OZ": "Название UZ (Кириллица)",
+    "Name RU": "Название RU",
+    "Name EN": "Название EN",
+    "Submenular soni": "Количество подменю",
+    "Actions": "Действия",
+    "Menu qoshish": "Добавить меню",
+    "show": "показать",
+    "per page": "на странице"
 }
