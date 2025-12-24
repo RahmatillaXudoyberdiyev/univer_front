@@ -43,8 +43,9 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
   const getLocalizedValue = useMemo(
     () => (obj: any) => {
       if (!obj) return ''
+      console.log(locale, obj[locale])
       return (
-        obj[locale] || obj['uz'] || obj['en'] || Object.values(obj)[0] || ''
+        obj[locale] || ''
       )
     },
     [locale]
@@ -103,7 +104,6 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
       animate={{ opacity: 1, y: 0 }}
       className="container-cs py-10 md:py-20"
     >
-      {/* Header: Back + Print */}
       <div className="flex items-center justify-between mb-12">
         <Link href="/admin/media">
           <Button
@@ -125,8 +125,7 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
         </Button>
       </div>
 
-      {/* Title & Meta */}
-      <div className="max-w-4xl mb-12">
+      <div className="max-w-4xl mb-12 ">
         <div className="flex flex-wrap items-center gap-4 mb-8">
           <div className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest">
             {post.type || tab}
@@ -148,7 +147,6 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
         </h1>
       </div>
 
-      {/* Main Media */}
       {hasMedia && (
         <section className="mb-20 space-y-6">
           <div className="relative aspect-21/9 w-full overflow-hidden rounded-[2.5rem] bg-muted shadow-2xl border border-muted/20">
@@ -173,7 +171,6 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
             )}
           </div>
 
-          {/* Thumbnails */}
           {post.url.length > 1 && (
             <div className="flex flex-wrap gap-4">
               {post.url.map((media: string, i: number) => (
@@ -206,14 +203,13 @@ const AdminPublicationItem = ({ id, tab }: { id: string; tab: string }) => {
         </section>
       )}
 
-      {/* Content + Sidebar */}
       <div className="grid grid-cols-5 w-full">
-        <div className="col-span-4">
+        <div className="col-span-4 pr-10">
           <article className="prose prose-zinc dark:prose-invert max-w-none text-justify">
             {content && content !== '<p></p>' ? (
               <div
                 dangerouslySetInnerHTML={{ __html: content }}
-                className="ql-editor !p-0 font-medium text-lg md:text-xl leading-[1.8] text-foreground/80
+                className="ql-editor p-0! font-medium text-lg md:text-xl leading-[1.8] text-foreground/80
                            **:bg-transparent! **:text-current! wrap-anywhere whitespace-normal"
               />
             ) : (

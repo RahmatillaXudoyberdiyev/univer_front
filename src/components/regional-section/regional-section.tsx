@@ -51,12 +51,60 @@ const regionData: { [key: string]: RegionGroup } = {
         ],
     },
     'narpayskiy-rayon': {
-        regionName: 'Narpay tuman',
+        regionName: 'Narpay tumani',
         officials: [
             {
-                name: 'Abdulazizov Abdulaziz Abdullayevich',
-                title: "Narqo tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
-                phone: '+998 90 195 99 11',
+                name: 'Aliyev Sherali Usmonovich',
+                title: "Narpay tumani hokimining o'rinbosari - Investitsiyalar va tashqi savdo bo'limi boshlig'i",
+                phone: '+998 (93) 724-75-06',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'koshrabadskiy-rayon': {
+        regionName: "Qo'shrabod tumani",
+        officials: [
+            {
+                name: "Khaydarov Shohjakhon Yokub o'g'li",
+                title: "Qo'shrabod tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 91-536-75-72',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'payarikskiy-rayon': {
+        regionName: 'Payariq tumani',
+        officials: [
+            {
+                name: 'Niyatov Rashid Abdisattarovich',
+                title: "Payariq tumani hokimining o'rinbosari - Investitsiyalar va tashqi savdo bo'limi boshlig'i",
+                phone: '+998 (97) 925-87-06',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'ishtihanskiy-rayon': {
+        regionName: 'Ishtixon tumani',
+        officials: [
+            {
+                name: 'Nurjamolov Аnvar Аbduhakim oʼgʼli',
+                title: "Ishtixon tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 93 359 41 00',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'nurabadskiy-rayon': {
+        regionName: 'Nurabad tumani',
+        officials: [
+            {
+                name: 'Mirzoxodjayev Suxrob Baxritdinovich',
+                title: "Nurobod tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 90 474 58 00',
                 email: 'info@saminvest.uz',
                 img: '',
             },
@@ -82,7 +130,7 @@ const RegionalSection = () => {
         <section className="container-cs py-12">
             <div className="flex justify-between items-center pb-5">
                 <h1 className="font-bold text-2xl mb-6 pb-2 border-b-2 border-[#2B2B7A] w-fit ">
-                    {t("Hududiy bolinmalar")}
+                    {t('Hududiy bolinmalar')}
                 </h1>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-12 md:gap-8 items-center">
@@ -103,19 +151,64 @@ const RegionalSection = () => {
                                 <div className="h-1 w-16 bg-blue-500 mt-3 rounded-full" />
                             </div>
 
-                            <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
-                                <svg
-                                    width="200"
-                                    height="200"
-                                    viewBox="0 0 200 200"
-                                    className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-50 lg:h-50"
-                                >
-                                    <path
-                                        d="M100 0L200 100L100 200L0 100Z"
-                                        fill="currentColor"
-                                        className="text-slate-400"
-                                    />
-                                </svg>
+                            <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
+                                <div className="absolute top-8 right-8 w-20 h-20 animate-[spin_12s_linear_infinite]">
+                                    <div className="absolute top-0 left-0 w-8 h-8 animate-[flicker1_4s_ease-in-out_infinite]">
+                                        <svg
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 32 32"
+                                        >
+                                            <path
+                                                d="M2 2 L14 2 L16 16 L2 14 Z"
+                                                fill="#3b82f6"
+                                                opacity="0.15"
+                                            />
+                                        </svg>
+                                    </div>
+
+                                    <div className="absolute top-0 right-0 w-8 h-8 animate-[flicker2_4s_ease-in-out_infinite]">
+                                        <svg
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 32 32"
+                                        >
+                                            <path
+                                                d="M18 2 L30 2 L30 14 L16 16 Z"
+                                                fill="#06b6d4"
+                                                opacity="0.15"
+                                            />
+                                        </svg>
+                                    </div>
+
+                                    <div className="absolute bottom-0 left-0 w-8 h-8 animate-[flicker3_4s_ease-in-out_infinite]">
+                                        <svg
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 32 32"
+                                        >
+                                            <path
+                                                d="M2 18 L16 16 L14 30 L2 30 Z"
+                                                fill="#0ea5e9"
+                                                opacity="0.15"
+                                            />
+                                        </svg>
+                                    </div>
+
+                                    <div className="absolute bottom-0 right-0 w-8 h-8 animate-[flicker4_4s_ease-in-out_infinite]">
+                                        <svg
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 32 32"
+                                        >
+                                            <path
+                                                d="M16 16 L30 18 L30 30 L18 30 Z"
+                                                fill="#38bdf8"
+                                                opacity="0.15"
+                                            />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="relative z-10 space-y-10">

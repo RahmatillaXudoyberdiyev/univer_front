@@ -67,5 +67,19 @@
     "Actions": "Amallar",
     "Menu qoshish": "Menu qo'shish",
     "show": "ko'rsatish",
-    "per page": "bet bo'yicha"
+    "per page": "bet bo'yicha",
+    "General Settings": "Umumiy sozlamalar",
+    "Manage contact details and working schedule": "Aloqa ma'lumotlari va ish jadvalini boshqarish",
+    "Update Details": "Ma'lumotlarni yangilash",
+    "Contact Channels": "Aloqa kanallari",
+    "Reception Phone": "Devonxona telefoni",
+    "Info Email": "Ma'lumot uchun elektron pochta",
+    "Trust Line Phones": "Ishonch telefonlari",
+    "Add": "Qo'shish",
+    "Corporate Emails": "Korporativ elektron pochta manzillari",
+    "Working Hours": "Ish soatlari",
+    "All languages are required": "Barcha tillar majburiy",
+    "Saqlash": "Saqlash",
+    "Saqlanmoqda": "Saqlanmoqda",
+    "Malumot matnini bu yerga yozing": "Ma'lumot matnini bu yerga yozing"
 }

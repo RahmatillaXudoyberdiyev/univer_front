@@ -14,8 +14,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useNotify from '@/hooks/use-notify'
 import { api } from '@/models/axios'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from '@mdxeditor/editor'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Asterisk, Loader2, Plus, Save, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -54,6 +56,7 @@ type FormValues = z.infer<typeof formSchema>
 
 const MainDetails = () => {
     const { toastSuccess, toastError } = useNotify()
+    const t = useTranslations()
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -134,9 +137,9 @@ const MainDetails = () => {
         >
             <div className="flex justify-between items-end border-b pb-6">
                 <div>
-                    <h1 className="text-2xl font-bold">General Settings</h1>
+                    <h1 className="text-2xl font-bold">{t("General Settings")}</h1>
                     <p className="text-sm text-muted-foreground">
-                        Manage contact details and working schedule.
+                        {t("Manage contact details and working schedule")}
                     </p>
                 </div>
                 <Button
@@ -149,18 +152,18 @@ const MainDetails = () => {
                     ) : (
                         <Save className="mr-2 h-4 w-4" />
                     )}
-                    Update Details
+                    {t("Update Details")}
                 </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <Card className="row-span-2">
                     <CardHeader>
-                        <CardTitle>Contact Channels</CardTitle>
+                        <CardTitle>{t("Contact Channels")}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
                             <Label className="pb-2">
-                                Reception Phone{' '}
+                                {t("Reception Phone")}{' '}
                                 <Asterisk className="inline w-3 h-3 text-red-500" />
                             </Label>
                             <Input {...form.register('receptionPhone')} />
@@ -173,7 +176,7 @@ const MainDetails = () => {
 
                         <div>
                             <Label className="pb-2">
-                                Info Email{' '}
+                                {t("Info Email")}{' '}
                                 <Asterisk className="inline w-3 h-3 text-red-500" />
                             </Label>
                             <Input {...form.register('infoEmails')} />
@@ -188,13 +191,13 @@ const MainDetails = () => {
 
                 <Card>
                     <CardHeader className="flex justify-between">
-                        <CardTitle>Trust Line Phones</CardTitle>
+                        <CardTitle>{t("Trust Line Phones")}</CardTitle>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => trustLineArray.append('')}
                         >
-                            <Plus /> Add
+                            <Plus /> {t("Add")}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -228,13 +231,13 @@ const MainDetails = () => {
 
                 <Card className="col-span-1">
                     <CardHeader className="flex justify-between">
-                        <CardTitle>Corporate Emails</CardTitle>
+                        <CardTitle>{t("Corporate Emails")}</CardTitle>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => corporateEmailsArray.append('')}
                         >
-                            <Plus /> Add
+                            <Plus /> {t("Add")}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -268,9 +271,9 @@ const MainDetails = () => {
 
                 <Card className="col-span-2">
                     <CardHeader>
-                        <CardTitle>Working Hours</CardTitle>
+                        <CardTitle>{t("Working Hours")}</CardTitle>
                         <CardDescription>
-                            All languages are required
+                            {t("All languages are required")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

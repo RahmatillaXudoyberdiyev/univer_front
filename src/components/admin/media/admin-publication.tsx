@@ -179,16 +179,13 @@ const AdminPublication = ({
     }
   }
 
-  // Editing item o'zgarganda form va fayllarni to'ldirish
   useEffect(() => {
     if (editingItem) {
-      // Barcha tillar uchun qiymatlarni set qilish
       ;(['uz', 'oz', 'ru', 'en'] as Language[]).forEach((lang) => {
         form.setValue(`titles.${lang}`, editingItem.titles?.[lang] ?? '')
         form.setValue(`contents.${lang}`, editingItem.contents?.[lang] ?? '')
       })
 
-      // Fayllarni yuklash
       const existingFiles: ExistingFile[] = (editingItem.url || []).map(
         (u: string) => ({
           url: u,
@@ -204,7 +201,6 @@ const AdminPublication = ({
 
       setSelectedFiles(existingFiles)
 
-      // Modalni ochish
       setAddModalOpen(true)
     }
   }, [editingItem, form])
@@ -234,7 +230,7 @@ const AdminPublication = ({
           onClick={() => setAddModalOpen(true)}
           className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
-          Qo'shish
+          {t("Add")}
         </Button>
       </div>
 
@@ -331,7 +327,6 @@ const AdminPublication = ({
                 </div>
 
                 <div className="space-y-4 bg-background border rounded-xl p-4 shadow-sm">
-                  {/* Sarlavha — har bir til uchun alohida Controller */}
                   {(['uz', 'oz', 'ru', 'en'] as Language[]).map((lang) => (
                     <div
                       key={`title-${lang}`}
@@ -351,7 +346,6 @@ const AdminPublication = ({
                     </div>
                   ))}
 
-                  {/* Kontent — har bir til uchun alohida Controller */}
                   {(['uz', 'oz', 'ru', 'en'] as Language[]).map((lang) => (
                     <div
                       key={`content-${lang}`}
@@ -367,7 +361,7 @@ const AdminPublication = ({
                               value={field.value || ''}
                               onChange={field.onChange}
                               modules={modules}
-                              placeholder="Ma'lumot matnini bu yerga yozing..."
+                              placeholder={t("Malumot matnini bu yerga yozing") + '...'}
                             />
                           )}
                         />
@@ -392,7 +386,7 @@ const AdminPublication = ({
                 disabled={isSubmitting}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-8"
               >
-                {isSubmitting ? 'Saqlanmoqda...' : 'Saqlash'}
+                {isSubmitting ? `${t("Saqlanmoqda")}...` : t('Saqlash')}
               </Button>
             </div>
           </form>

@@ -67,5 +67,19 @@
     "Actions": "Действия",
     "Menu qoshish": "Добавить меню",
     "show": "показать",
-    "per page": "на странице"
+    "per page": "на странице",
+    "General Settings": "Общие настройки",
+    "Manage contact details and working schedule": "Управление контактными данными и графиком работы",
+    "Update Details": "Обновить данные",
+    "Contact Channels": "Контактные каналы",
+    "Reception Phone": "Телефон приёмной",
+    "Info Email": "Электронная почта для информации",
+    "Trust Line Phones": "Телефоны доверия",
+    "Add": "Добавить",
+    "Corporate Emails": "Корпоративные электронные почты",
+    "Working Hours": "Время работы",
+    "All languages are required": "Все языки обязательны",
+    "Saqlash": "Сохранить",
+    "Saqlanmoqda": "Сохранение",
+    "Malumot matnini bu yerga yozing": "Введите текст информации здесь"
 }
