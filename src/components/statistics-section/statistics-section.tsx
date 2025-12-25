@@ -145,11 +145,11 @@ const StatisticsSection = () => {
     return (
         <section
             ref={ref}
-            className="py-16 px-4 bg-[#0A0A3D]  text-white relative overflow-hidden "
+            className="py-16 px-4 bg-[#1C355E]  text-white relative overflow-hidden "
         >
             <div className="absolute top-0 left-0 w-full h-full opacity-20 ">
-                <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl"></div>
-                <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-indigo-500 rounded-full filter blur-3xl"></div>
+                <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue-900 rounded-full filter blur-3xl"></div>
+                <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-indigo-900 rounded-full filter blur-3xl"></div>
             </div>
 
             <div className=" mx-auto max-w-7xl ">

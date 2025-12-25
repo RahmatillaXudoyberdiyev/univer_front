@@ -51,8 +51,7 @@ const Preheader = () => {
                 >
                     <h1 className="flex justify-center items-center gap-2 cursor-pointer hover:text-primary transition-colors">
                         <MapPin size={16} />
-                        O'zbekiston, Samarqand shahar, Ko'ksaroy maydoni 4A-uy,
-                        104157
+                        Samarqand shahri, Ko‘ksaroy maydoni, 1-uy
                     </h1>
 
                     <AnimatePresence>
@@ -71,7 +70,7 @@ const Preheader = () => {
                                     width="100%"
                                     height="100%"
                                     frameBorder="0"
-                                    src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3071.936630453303!2d66.96326291211158!3d39.657145971452585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMznCsDM5JzI1LjciTiA2NsKwNTcnNTUuNiJF!5e0!3m2!1sen!2s!4v1710000000000!5m2!1sen!2s"
+                                    src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3071.936630453303!2d66.965423!3d39.657179!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2zMznCsDM5JzI1LjgiTiA2NsKwNTcnNTUuNSJF!5e0!3m2!1sen!2s!4v1735142400!5m2!1sen!2s"
                                     allowFullScreen
                                 />
                             </motion.div>
@@ -100,7 +99,7 @@ const Preheader = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.6, ease: 'easeInOut' }}
-                        className="absolute top-full left-0 z-55 bg-[#0A0A3D] text-white w-full py-4 border-t border-white/10"
+                        className="absolute top-full left-0 z-55 bg-[#1C355E] text-white w-full py-4 border-t border-white/10"
                     >
                         <div className="container-cs flex items-center justify-between">
                             <div className="flex items-center gap-8">

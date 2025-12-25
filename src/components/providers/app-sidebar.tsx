@@ -47,19 +47,19 @@ export function AppSidebar() {
     })
     return (
         <Sidebar className="border-r-0">
-            <SidebarHeader className="bg-[#0A0A3D] pt-12 pb-6 px-6 border-b border-white/10">
+            <SidebarHeader className="bg-[#1C355E] pt-12 pb-6 px-6 border-b border-white/10">
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     className="flex flex-col items-center gap-4"
                 >
                     <Link href="/" className="flex flex-col items-center gap-2">
-                        <div className="relative p-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
+                        <div className="relative ">
                             <Image
                                 src={logo}
                                 alt="Logo"
-                                width={80}
-                                height={80}
+                                width={90}
+                                height={90}
                                 className="object-contain"
                             />
                         </div>
@@ -73,7 +73,7 @@ export function AppSidebar() {
                 </motion.div>
             </SidebarHeader>
 
-            <SidebarContent className="bg-[#0A0A3D] px-4 py-8 overflow-y-auto no-scrollbar">
+            <SidebarContent className="bg-[#1C355E] px-4 py-8 overflow-y-auto no-scrollbar">
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
@@ -105,7 +105,7 @@ export function AppSidebar() {
                 </motion.div>
             </SidebarContent>
 
-            <SidebarFooter className="bg-[#0A0A3D] pb-10 px-6 border-t border-white/5">
+            <SidebarFooter className="bg-[#1C355E] pb-10 px-6 border-t border-white/5">
                 <p className="text-[10px] text-white/40 uppercase tracking-[2px] text-center mb-4">
                     {t('Ijtimoiy tarmoqlar')}
                 </p>
