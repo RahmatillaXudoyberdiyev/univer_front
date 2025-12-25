@@ -176,7 +176,7 @@ const Header = () => {
                             }}
                           >
                             <Link
-                              href={path}
+                              href={path as any}
                               className="block px-6 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 hover:pl-8 transition-all duration-200 relative group/item"
                             >
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-blue-600 dark:bg-blue-500 group-hover/item:w-1.5 group-hover/item:h-1.5 transition-all duration-200" />

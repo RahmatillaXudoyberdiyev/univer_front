@@ -17,8 +17,9 @@ import {
   UndoRedo,
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
+import FileUploadZone, { UploadedFile } from '@/components/file-upload-zone'
 import { api, baseBackendUrl } from '@/models/axios'
 import {
   AdmonitionDirectiveDescriptor,
@@ -40,12 +41,15 @@ import { useParams } from 'next/navigation'
 
 const Editor: React.FC = () => {
   const { id } = useParams()
+  const [files, setFiles] = useState<UploadedFile[]>([])
   const editorRef = useRef<MDXEditorMethods>(null)
 
   // Ma'lumotni yuklash
   const { data, isLoading } = useQuery({
     enabled: !!id,
     queryKey: ['sub-menu', id],
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await api.get(`/sub-menu/slug/${id}`)
       return response.data
@@ -93,7 +97,10 @@ const Editor: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
+    <div
+      style={{ maxWidth: '900px' }}
+      className="mx-auto py-10 flex flex-col gap-3"
+    >
       <MDXEditor
         className="shadow-sm"
         ref={editorRef}
@@ -141,6 +148,7 @@ const Editor: React.FC = () => {
           }),
         ]}
       />
+      <FileUploadZone files={files} setFiles={setFiles} />
     </div>
   )
 }
