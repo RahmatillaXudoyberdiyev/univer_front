@@ -12,13 +12,12 @@ import {
     InsertThematicBreak,
     ListsToggle,
     MDXEditor,
-    MDXEditorMethods,
     Separator,
     toolbarPlugin,
     UndoRedo,
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import FileUploadZone, { UploadedFile } from '@/components/file-upload-zone'
 import { api, baseBackendUrl } from '@/models/axios'
@@ -41,11 +40,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 
-const Editor: React.FC = () => {
+const Editor = () => {
     const { id } = useParams()
     const t = useTranslations()
     const [files, setFiles] = useState<UploadedFile[]>([])
-    const editorRef = useRef<MDXEditorMethods>(null)
+    const editorRef = useRef<any>(null)
     const { toastSuccess, toastWarning, toastError } = useNotify()
     const { data, isLoading } = useQuery({
         enabled: !!id,
@@ -70,7 +69,6 @@ const Editor: React.FC = () => {
             })
             console.log('Menu saved successfully:', response.data)
             toastSuccess(t('Malumotlar muvaffaqiyatli saqlandi'))
-
         } catch (error) {
             toastError(t('Malumotlar saqlashda xatolik yuzaga keldi'))
             console.error('Error saving menu:', error)
@@ -91,7 +89,7 @@ const Editor: React.FC = () => {
             return `${baseBackendUrl}/${uploadPath}`
         } catch (error) {
             console.error('Image upload error:', error)
-            toastError (t('Rasmlar yuklashda xatolik yuz berdi'))
+            toastError(t('Rasmlar yuklashda xatolik yuz berdi'))
             return 'https://via.placeholder.com/150?text=Upload+Failed'
         }
     }
@@ -145,7 +143,7 @@ const Editor: React.FC = () => {
                                 <InsertThematicBreak />
                                 <Separator />
                                 <Button onClick={handleSave} title="Saqlash">
-                                    💾 {t("Saqlash")}
+                                    💾 {t('Saqlash')}
                                 </Button>
                             </>
                         ),

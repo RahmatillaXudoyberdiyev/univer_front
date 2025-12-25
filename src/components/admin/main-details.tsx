@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useNotify from '@/hooks/use-notify'
 import { api } from '@/models/axios'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useTranslation } from '@mdxeditor/editor'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Asterisk, Loader2, Plus, Save, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -22,14 +21,12 @@ import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-
 const LANGUAGES = [
     { key: 'uz', label: "O'zbekcha" },
     { key: 'oz', label: 'Ўзбекча' },
     { key: 'ru', label: 'Русский' },
     { key: 'en', label: 'English' },
 ] as const
-
 
 const formSchema = z.object({
     receptionPhone: z.string().min(1, 'Reception phone majburiy'),
@@ -58,7 +55,7 @@ const MainDetails = () => {
     const { toastSuccess, toastError } = useNotify()
     const t = useTranslations()
 
-    const form = useForm<FormValues>({
+    const form = useForm<any>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             receptionPhone: '',
@@ -69,7 +66,7 @@ const MainDetails = () => {
         },
     })
 
-    const { errors, isSubmitting } = form.formState
+    const { errors, isSubmitting }: any = form.formState
 
     const trustLineArray = useFieldArray({
         control: form.control,
@@ -109,7 +106,7 @@ const MainDetails = () => {
         updateDetails.mutate(data)
     }
 
-    const onError = (errs: typeof errors) => {
+    const onError = (errs: any) => {
         const firstError =
             errs.receptionPhone?.message ||
             errs.infoEmails?.message ||
@@ -137,9 +134,11 @@ const MainDetails = () => {
         >
             <div className="flex justify-between items-end border-b pb-6">
                 <div>
-                    <h1 className="text-2xl font-bold">{t("General Settings")}</h1>
+                    <h1 className="text-2xl font-bold">
+                        {t('General Settings')}
+                    </h1>
                     <p className="text-sm text-muted-foreground">
-                        {t("Manage contact details and working schedule")}
+                        {t('Manage contact details and working schedule')}
                     </p>
                 </div>
                 <Button
@@ -152,18 +151,18 @@ const MainDetails = () => {
                     ) : (
                         <Save className="mr-2 h-4 w-4" />
                     )}
-                    {t("Update Details")}
+                    {t('Update Details')}
                 </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <Card className="row-span-2">
                     <CardHeader>
-                        <CardTitle>{t("Contact Channels")}</CardTitle>
+                        <CardTitle>{t('Contact Channels')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
                             <Label className="pb-2">
-                                {t("Reception Phone")}{' '}
+                                {t('Reception Phone')}{' '}
                                 <Asterisk className="inline w-3 h-3 text-red-500" />
                             </Label>
                             <Input {...form.register('receptionPhone')} />
@@ -176,7 +175,7 @@ const MainDetails = () => {
 
                         <div>
                             <Label className="pb-2">
-                                {t("Info Email")}{' '}
+                                {t('Info Email')}{' '}
                                 <Asterisk className="inline w-3 h-3 text-red-500" />
                             </Label>
                             <Input {...form.register('infoEmails')} />
@@ -191,89 +190,99 @@ const MainDetails = () => {
 
                 <Card>
                     <CardHeader className="flex justify-between">
-                        <CardTitle>{t("Trust Line Phones")}</CardTitle>
+                        <CardTitle>{t('Trust Line Phones')}</CardTitle>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => trustLineArray.append('')}
                         >
-                            <Plus /> {t("Add")}
+                            <Plus /> {t('Add')}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {trustLineArray.fields.map((field, idx) => (
-                            <div key={field.id}>
-                                <div className="flex gap-2">
-                                    <Input
-                                        {...form.register(
-                                            `trustLinePhones.${idx}`
-                                        )}
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        onClick={() =>
-                                            trustLineArray.remove(idx)
-                                        }
-                                    >
-                                        <Trash2 className="text-red-500" />
-                                    </Button>
+                        {trustLineArray.fields.map(
+                            (field: Record<string, any>, idx: number) => (
+                                <div key={field.id}>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            {...form.register(
+                                                `trustLinePhones.${idx}`
+                                            )}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() =>
+                                                trustLineArray.remove(idx)
+                                            }
+                                        >
+                                            <Trash2 className="text-red-500" />
+                                        </Button>
+                                    </div>
+                                    {errors.trustLinePhones?.[idx] && (
+                                        <p className="text-sm text-red-500 mt-1">
+                                            {
+                                                errors.trustLinePhones[idx]
+                                                    ?.message
+                                            }
+                                        </p>
+                                    )}
                                 </div>
-                                {errors.trustLinePhones?.[idx] && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.trustLinePhones[idx]?.message}
-                                    </p>
-                                )}
-                            </div>
-                        ))}
+                            )
+                        )}
                     </CardContent>
                 </Card>
 
                 <Card className="col-span-1">
                     <CardHeader className="flex justify-between">
-                        <CardTitle>{t("Corporate Emails")}</CardTitle>
+                        <CardTitle>{t('Corporate Emails')}</CardTitle>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => corporateEmailsArray.append('')}
                         >
-                            <Plus /> {t("Add")}
+                            <Plus /> {t('Add')}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {corporateEmailsArray.fields.map((field, idx) => (
-                            <div key={field.id}>
-                                <div className="flex gap-2">
-                                    <Input
-                                        {...form.register(
-                                            `corporateEmails.${idx}`
-                                        )}
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        onClick={() =>
-                                            corporateEmailsArray.remove(idx)
-                                        }
-                                    >
-                                        <Trash2 className="text-red-500" />
-                                    </Button>
+                        {corporateEmailsArray.fields.map(
+                            (field: Record<string, any>, idx: number) => (
+                                <div key={field.id}>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            {...form.register(
+                                                `corporateEmails.${idx}`
+                                            )}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() =>
+                                                corporateEmailsArray.remove(idx)
+                                            }
+                                        >
+                                            <Trash2 className="text-red-500" />
+                                        </Button>
+                                    </div>
+                                    {errors.corporateEmails?.[idx] && (
+                                        <p className="text-sm text-red-500 mt-1">
+                                            {
+                                                errors.corporateEmails[idx]
+                                                    ?.message
+                                            }
+                                        </p>
+                                    )}
                                 </div>
-                                {errors.corporateEmails?.[idx] && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.corporateEmails[idx]?.message}
-                                    </p>
-                                )}
-                            </div>
-                        ))}
+                            )
+                        )}
                     </CardContent>
                 </Card>
 
                 <Card className="col-span-2">
                     <CardHeader>
-                        <CardTitle>{t("Working Hours")}</CardTitle>
+                        <CardTitle>{t('Working Hours')}</CardTitle>
                         <CardDescription>
-                            {t("All languages are required")}
+                            {t('All languages are required')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

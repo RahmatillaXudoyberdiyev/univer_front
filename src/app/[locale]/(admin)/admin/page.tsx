@@ -1,4 +1,4 @@
-import MainDetails from '@/components/admin/main-detials'
+import MainDetails from '@/components/admin/main-details'
 import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata({
