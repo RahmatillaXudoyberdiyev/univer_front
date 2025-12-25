@@ -11,10 +11,10 @@ import {
     Send,
     Youtube,
 } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 import logo from '../../../public/logo.png'
-import { useLocale, useTranslations } from 'next-intl'
 
 const Footer = () => {
     const locale = useLocale()
@@ -27,24 +27,24 @@ const Footer = () => {
         },
     })
     return (
-        <footer className="bg-[#0A0A3D] py-12 text-white">
+        <footer className="bg-[#1C355E] py-12 text-white">
             <div className="container-cs px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                     <div className="flex flex-col items-center md:items-start gap-6">
-                        <div className="relative p-2 rounded-full bg-white/5 border border-white/10 w-fit">
+                        <div className="relative ">
                             <Image
                                 src={logo}
                                 alt="Logo"
-                                width={80}
-                                height={80}
+                                width={90}
+                                height={90}
                                 className="object-contain"
                             />
                         </div>
                         <div className="space-y-2">
                             <h1 className="text-lg font-bold text-center md:text-left leading-tight tracking-wide uppercase">
-                                Samarqand Viloyati <br />
+                                Samarqand <br />
                                 <span className="text-blue-400 font-medium normal-case block mt-1">
-                                    Investitsiyalar, sanoat va savdo boshqarmasi
+                                    Invest kompaniyasi
                                 </span>
                             </h1>
                         </div>
@@ -54,11 +54,11 @@ const Footer = () => {
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        <h2 className="text-2xl font-bold">{t("Aloqa")}</h2>
+                        <h2 className="text-2xl font-bold">{t('Aloqa')}</h2>
 
                         <div className="space-y-5 text-white/90">
                             <div className="flex items-center gap-4">
-                                <div className='flex flex-col gap-4'>
+                                <div className="flex flex-col gap-4">
                                     {detailsData.data?.trustLinePhones &&
                                         detailsData.data?.trustLinePhones.map(
                                             (phone: string, i: number) => (
@@ -101,24 +101,23 @@ const Footer = () => {
                                     className="text-blue-400 shrink-0"
                                 />
                                 <p className="text-base leading-relaxed">
-                                    O'zbekiston, Samarqand shahar, Ko'ksaroy
-                                    maydoni 4A-uy, 104157
+                                    Samarqand shahri, Ko‘ksaroy maydoni, 1-uy
                                 </p>
                             </div>
                         </div>
 
                         <div>
-                            <h3 className="font-bold mb-2">{t('Ish vaqti')}:</h3>
+                            <h3 className="font-bold mb-2">
+                                {t('Ish vaqti')}:
+                            </h3>
                             <p className="text-base text-white/80">
-                                {
-                                    detailsData.data?.workingHours[locale]
-                                }
+                                {detailsData.data?.workingHours[locale]}
                             </p>
                         </div>
 
                         <div className="pt-4">
                             <p className="text-[10px] text-white/40 uppercase tracking-[2px] mb-4">
-                                {t("Ijtimoiy tarmoqlar")}
+                                {t('Ijtimoiy tarmoqlar')}
                             </p>
                             <div className="flex justify-start gap-3">
                                 <SocialIcon

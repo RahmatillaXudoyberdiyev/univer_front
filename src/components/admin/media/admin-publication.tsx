@@ -159,7 +159,7 @@ const AdminPublication = ({
       formData.append('data', JSON.stringify(payload))
 
       if (editingItem) {
-        await api.put(`/publication/${editingItem.id}`, formData, {
+        await api.patch(`/publication/update/${editingItem.id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         toastSuccess('Muvaffaqiyatli yangilandi')
@@ -182,9 +182,9 @@ const AdminPublication = ({
   useEffect(() => {
     if (editingItem) {
       ;(['uz', 'oz', 'ru', 'en'] as Language[]).forEach((lang) => {
-        form.setValue(`titles.${lang}`, editingItem.titles?.[lang] ?? '')
-        form.setValue(`contents.${lang}`, editingItem.contents?.[lang] ?? '')
-      })
+      form.setValue(`titles.${lang}`, editingItem.title?.[lang] ?? '')
+      form.setValue(`contents.${lang}`, editingItem.content?.[lang] ?? '')
+    })
 
       const existingFiles: ExistingFile[] = (editingItem.url || []).map(
         (u: string) => ({
@@ -203,7 +203,7 @@ const AdminPublication = ({
 
       setAddModalOpen(true)
     }
-  }, [editingItem, form])
+  }, [editingItem, form.setValue])
 
   return (
     <div className="container-cs py-5 mb-5 text-foreground">
@@ -244,6 +244,7 @@ const AdminPublication = ({
         onOpenChange={handleModalClose}
       >
         <DialogContent className="md:max-w-5xl flex flex-col h-[85vh] overflow-hidden p-0">
+          
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="flex items-center gap-2">
               <PlusCircle /> {editingItem ? t('Tahrirlash') : t('Yangi')}{' '}

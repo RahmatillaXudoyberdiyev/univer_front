@@ -81,5 +81,11 @@
     "All languages are required": "Все языки обязательны",
     "Saqlash": "Сохранить",
     "Saqlanmoqda": "Сохранение",
-    "Malumot matnini bu yerga yozing": "Введите текст информации здесь"
+    "Malumot matnini bu yerga yozing": "Введите текст информации здесь",
+    "Kalkulyator": "Калькулятор",
+    "Malumotlar muvaffaqiyatli saqlandi": "Данные успешно сохранены",
+    "Malumotlar saqlashda xatolik yuzaga keldi": "При сохранении данных возникла ошибка",
+    "Rasmlar yuklashda xatolik yuz berdi": "При загрузке изображений произошла ошибка",
+    "Rasmlar muvaffaqiyatli yuklandi": "Изображения успешно загружены",
+    "Tahrirlash": "Редактировать"
 }

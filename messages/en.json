@@ -81,5 +81,11 @@
     "All languages are required": "All languages are required",
     "Saqlash": "Save",
     "Saqlanmoqda": "Saving",
-    "Malumot matnini bu yerga yozing": "Enter the information text here"
+    "Malumot matnini bu yerga yozing": "Enter the information text here",
+    "Kalkulyator": "Calculator",
+    "Malumotlar muvaffaqiyatli saqlandi": "Data saved successfully",
+    "Malumotlar saqlashda xatolik yuzaga keldi": "An error occurred while saving data",
+    "Rasmlar yuklashda xatolik yuz berdi": "An error occurred while uploading images",
+    "Rasmlar muvaffaqiyatli yuklandi": "Images uploaded successfully",
+    "Tahrirlash": "Edit"
 }

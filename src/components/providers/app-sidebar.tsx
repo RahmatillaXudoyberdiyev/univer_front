@@ -64,9 +64,9 @@ export function AppSidebar() {
               />
             </div>
             <h1 className="text-sm font-bold text-white text-center leading-tight tracking-wide uppercase">
-              Samarqand Viloyati <br />
+              Samarqand <br />
               <span className="text-blue-400 font-medium normal-case block mt-1 opacity-80">
-                Investitsiyalar, sanoat va savdo boshqarmasi
+                Invest kompaniyasi
               </span>
             </h1>
           </Link>

@@ -10,6 +10,7 @@ import {
     Dialog,
     DialogClose,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
 import {
@@ -128,6 +129,7 @@ const AdminPublicationList = ({
                                 <DialogContent
                                     onClick={(e) => e.stopPropagation()}
                                 >
+                                    <DialogTitle className="hidden"></DialogTitle>
                                     <p className="mb-4">
                                         Rostdan o‘chirmoqchimisiz?
                                     </p>
@@ -313,7 +315,15 @@ const AdminPublicationList = ({
                             <p className="pt-2 text-[#76767A] text-sm">
                                 {item.createdAt
                                     ? new Date(item.createdAt).toLocaleString(
-                                          locale
+                                          locale,
+                                          {
+                                              year: 'numeric',
+                                              month: 'numeric',
+                                              day: 'numeric',
+                                              hour: 'numeric',
+                                              minute: 'numeric',
+                                              hour12: false,
+                                          }
                                       )
                                     : '---'}
                             </p>

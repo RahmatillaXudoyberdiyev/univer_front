@@ -81,5 +81,11 @@
     "All languages are required": "Barcha tillar majburiy",
     "Saqlash": "Saqlash",
     "Saqlanmoqda": "Saqlanmoqda",
-    "Malumot matnini bu yerga yozing": "Ma'lumot matnini bu yerga yozing"
+    "Malumot matnini bu yerga yozing": "Ma'lumot matnini bu yerga yozing",
+    "Kalkulyator": "Kalkulyator",
+    "Malumotlar muvaffaqiyatli saqlandi": "Ma'lumotlar muvaffaqiyatli saqlandi",
+    "Malumotlar saqlashda xatolik yuzaga keldi": "Ma'lumotlarni saqlashda xatolik yuzaga keldi",
+    "Rasmlar yuklashda xatolik yuz berdi": "Rasmlarni yuklashda xatolik yuz berdi",
+    "Rasmlar muvaffaqiyatli yuklandi": "Rasmlar muvaffaqiyatli yuklandi",
+    "Tahrirlash": "Tahrirlash"
 }
