@@ -145,7 +145,7 @@ const StatisticsSection = () => {
     return (
         <section
             ref={ref}
-            className="py-16 px-4 bg-[#1C355E]  text-white relative overflow-hidden "
+            className="py-16 px-4 bg-[#0A0A3D]  text-white relative overflow-hidden "
         >
             <div className="absolute top-0 left-0 w-full h-full opacity-20 ">
                 <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue-900 rounded-full filter blur-3xl"></div>
@@ -153,8 +153,6 @@ const StatisticsSection = () => {
             </div>
 
             <div className=" mx-auto max-w-7xl ">
-
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {stats.map((stat, index) => (
                         <motion.div

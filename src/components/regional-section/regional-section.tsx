@@ -129,7 +129,7 @@ const RegionalSection = () => {
     return (
         <section className="container-cs py-12">
             <div className="flex justify-between items-center pb-5">
-                <h1 className="font-bold text-2xl mb-6 pb-2 border-b-2 border-[#1C355E] w-fit ">
+                <h1 className="font-bold text-2xl mb-6 pb-2 border-b-2 border-[#0A0A3D] w-fit ">
                     {t('Hududiy bolinmalar')}
                 </h1>
             </div>
@@ -145,7 +145,7 @@ const RegionalSection = () => {
                             className="relative overflow-hidden p-5 md:p-10 rounded-[40px] shadow-[0_10px_50px_rgba(0,0,0,0.05)] border border-slate-100 dark:bg-[#0A0A3D]"
                         >
                             <div className="relative z-10 mb-8">
-                                <h2 className="text-2xl md:text-3xl font-black text-[#1C355E] dark:text-white mt-1">
+                                <h2 className="text-2xl md:text-3xl font-black text-[#0A0A3D] dark:text-white mt-1">
                                     {currentRegion.regionName}
                                 </h2>
                                 <div className="h-1 w-16 bg-blue-500 mt-3 rounded-full" />
@@ -238,7 +238,7 @@ const RegionalSection = () => {
                                                 </div>
 
                                                 <div className="flex-1 pt-2">
-                                                    <h2 className="text-xl md:text-2xl font-bold text-[#1C355E] dark:text-white mb-2 leading-tight">
+                                                    <h2 className="text-xl md:text-2xl font-bold text-[#0A0A3D] dark:text-white mb-2 leading-tight">
                                                         {official.name}
                                                     </h2>
                                                     <p className="text-xs font-bold text-blue-900/60 dark:text-slate-300 uppercase tracking-widest leading-relaxed max-w-md mb-4">
@@ -284,7 +284,7 @@ const RegionalSection = () => {
                             <g id="Samarkand_Map">
                                 <style>{`
                   .sam-path {
-                    fill: #1C355E;
+                    fill: #0A0A3D;
                     stroke: #fff;
                     stroke-width: 1px;
                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
