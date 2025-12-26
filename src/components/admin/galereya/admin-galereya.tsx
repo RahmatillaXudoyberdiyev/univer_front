@@ -235,7 +235,7 @@ const AdminGalereya = ({
                                             {item?.url?.length} Photos
                                         </span>
                                     </div>
-                                    <div className="absolute top-2 right-2 ">
+                                    <div className="absolute top-2 right-2 " onClick={(e) => e.stopPropagation()}>
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button
@@ -243,7 +243,6 @@ const AdminGalereya = ({
                                                     className="z-50 cursor-pointer"
                                                     onClick={(e) => {
                                                         e.stopPropagation()
-                                                        e.preventDefault()
                                                     }}
                                                 >
                                                     <Trash2 />
@@ -299,7 +298,7 @@ const AdminGalereya = ({
                                             <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-[#2B2B7A] border-b-8 border-b-transparent ml-1"></div>
                                         </div>
                                     </div>
-                                    <div className="absolute top-2 right-2 ">
+                                    <div className="absolute top-2 right-2 " onClick={(e) => e.stopPropagation()}>
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button
