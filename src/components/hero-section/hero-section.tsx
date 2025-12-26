@@ -52,7 +52,7 @@ const HeroSection = () => {
         />
       </div>
 
-      <Swiper
+      {/* <Swiper
         modules={[A11y, Autoplay]}
         slidesPerView={1}
         autoplay={{ delay: 5000, pauseOnMouseEnter: true }}
@@ -127,10 +127,9 @@ const HeroSection = () => {
             </SwiperSlide>
           )
         })}
-      </Swiper>
+      </Swiper> */}
     </div>
   )
 }
 
 export default HeroSection
- 
