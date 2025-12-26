@@ -8,7 +8,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         <NextIntlClientProvider>
             <ThemeProvider
                 attribute="class"
-                defaultTheme="system"
+                defaultTheme="light"
                 enableSystem
                 disableTransitionOnChange
             >
