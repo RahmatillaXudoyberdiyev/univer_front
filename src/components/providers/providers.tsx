@@ -5,7 +5,7 @@ import { AppSidebar } from './app-sidebar'
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
-        <NextIntlClientProvider>
+        <NextIntlClientProvider >
             <ThemeProvider
                 attribute="class"
                 defaultTheme="light"

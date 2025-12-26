@@ -22,7 +22,7 @@ const Layout = ({
       className={defaultTheme}
       style={{ colorScheme: defaultTheme }}
       suppressHydrationWarning
-      lang="en"
+      lang="uz"
     >
       <body className={`${inter.className} antialiased`}>
         <ReactQueryProvider>
