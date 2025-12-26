@@ -74,7 +74,7 @@ const AdminGalereya = ({
                     sort,
                 },
             })
-            return response.data
+            return response.data.reverse()
         },
     })
     const videos = useQuery({
@@ -88,7 +88,7 @@ const AdminGalereya = ({
                     sort,
                 },
             })
-            return response.data
+            return response.data.reverse()
         },
     })
 

@@ -10,38 +10,44 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X } from 'lucide-react' // For a close button
+import { X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
-
-const videoData = [
-    { id: 1, youtubeId: 'b9C7KzLpSYQ', title: 'Video 1' },
-    { id: 2, youtubeId: '-IW0rgRCvu4', title: 'Video 2' },
-    { id: 3, youtubeId: '2XRnQtQ0l64', title: 'Video 3' },
-
-
-]
+import { api } from '@/models/axios'
+import { useQuery } from '@tanstack/react-query'
 
 const VideoGallery = () => {
-    const totalCards = 50
-    const cardsPerPage = 12
     const [currentPage, setCurrentPage] = useState(1)
-
-    const startIndex = (currentPage - 1) * cardsPerPage
-    const endIndex = startIndex + cardsPerPage
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
+    const pageSize = 12
+    const activeTab = 'videolar'
+    const sort = 'desc'
 
-    const currentCards = videoData.slice(startIndex, endIndex)
+    const { data: videoData = [], isLoading } = useQuery({
+        enabled: activeTab === 'videolar',
+        queryKey: ['videos', activeTab, currentPage, pageSize, sort],
+        queryFn: async () => {
+            const response = await api.get('/gallery-item/videos', {
+                params: {
+                    page: currentPage,
+                    pageSize,
+                    sort,
+                },
+            })
+            return response.data.reverse()
+        },
+    })
 
-    const totalPages = Math.ceil(videoData.length / cardsPerPage)
+    const totalPages = Math.ceil(videoData.length / pageSize) || 1
     const t = useTranslations()
 
     const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) {
+        if (page >= 1 && (totalPages ? page <= totalPages : true)) {
             setCurrentPage(page)
         }
     }
+
     return (
         <div className="container-cs py-5 mb-5">
             <AnimatePresence>
@@ -103,7 +109,7 @@ const VideoGallery = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-                    {currentCards.map((video) => (
+                    {videoData.map((video: any) => (
                         <motion.div
                             key={video.id}
                             initial={{ opacity: 0, y: 20 }}

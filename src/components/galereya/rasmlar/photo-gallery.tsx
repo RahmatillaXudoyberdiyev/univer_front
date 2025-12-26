@@ -13,9 +13,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import placeholderImage from '../../../../public/image.png'
+import { useQuery } from '@tanstack/react-query'
+
 
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -27,53 +29,35 @@ import {
     Navigation,
     Pagination as SwiperPagination,
 } from 'swiper/modules'
-
-const photoData: Record<string, any>[] = [
-    {
-        id: 1,
-        alt: 'Gallery 1',
-        images: ['/image1.jpg', '/image2.jpg', '/image3.jpg'],
-    },
-    {
-        id: 2,
-        alt: 'Gallery 2',
-        images: Array.from({ length: 25 }).map((_, i) => `/image${i + 1}.jpg`),
-    },
-    {
-        id: 3,
-        alt: 'Gallery 3',
-        images: ['/image3.jpg', '/image2.jpg'],
-    },
-    ...Array.from({ length: 8 }).map((_, i) => ({
-        id: i + 4,
-        alt: `Gallery ${i + 4}`,
-        images: ['/image1.jpg', '/image2.jpg'],
-    })),
-]
+import { api } from '@/models/axios'
 
 const PhotoGallery = () => {
-    const [selectedGallery, setSelectedGallery] = useState<
-        (typeof photoData)[0] | null
-    >(null)
-    const totalCards = photoData.length
-    const cardsPerPage = 12
-    const totalPages = Math.ceil(totalCards / cardsPerPage)
-    const [currentPage, setCurrentPage] = useState(1)
-
-    const startIndex = (currentPage - 1) * cardsPerPage
-    const currentCards = useMemo(
-        () =>
-            photoData.slice(
-                (currentPage - 1) * cardsPerPage,
-                currentPage * cardsPerPage
-            ),
-        [currentPage, photoData]
-    )
-
     const t = useTranslations()
+    const [selectedGallery, setSelectedGallery] = useState<any | null>(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const pageSize = 12
+    const activeTab = 'rasmlar'
+    const sort = 'desc'
+
+    const { data: photoData = [], isLoading } = useQuery({
+        enabled: activeTab === 'rasmlar',
+        queryKey: ['images', activeTab, currentPage, pageSize, sort],
+        queryFn: async () => {
+            const response = await api.get('/gallery-item/images', {
+                params: {
+                    page: currentPage,
+                    pageSize,
+                    sort,
+                },
+            })
+            return response.data.reverse()
+        },
+    })
+
+    const totalPages = Math.ceil(photoData.length / pageSize) || 1
 
     const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) {
+        if (page >= 1 && (totalPages ? page <= totalPages : true)) {
             setCurrentPage(page)
         }
     }
@@ -105,7 +89,7 @@ const PhotoGallery = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-                    {currentCards.map((item) => (
+                    {photoData.map((item: any) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, y: 20 }}
@@ -118,17 +102,15 @@ const PhotoGallery = () => {
                             <div className="relative group overflow-hidden rounded-lg ">
                                 <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
                                     <Image
-                                        src={placeholderImage}
-                                        alt={item.alt}
-                                        className=" object-cover"
-                                        priority={
-                                            currentPage === 1 && item.id <= 6
-                                        }
+                                        src={item.mainImage || placeholderImage}
+                                        alt={item.alt || 'Gallery Image'}
+                                        fill
+                                        className="object-cover"
                                     />
                                 </div>
                                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <span className="text-white bg-black/50 px-3 py-1 rounded-full text-sm">
-                                        {item.images.length} Photos
+                                        {item.images?.length || 0} Photos
                                     </span>
                                 </div>
                             </div>
@@ -254,14 +236,12 @@ const PhotoGallery = () => {
                                 className="w-full h-full"
                                 loop
                             >
-                                {selectedGallery.images.map(
+                                {selectedGallery.images?.map(
                                     (img: string, idx: number) => (
                                         <SwiperSlide key={idx}>
                                             <div className="relative w-full h-full">
                                                 <Image
                                                     src={img}
-                                                    width={100}
-                                                    height={100}
                                                     alt={`${selectedGallery.alt}-${idx}`}
                                                     fill
                                                     className="object-contain"
