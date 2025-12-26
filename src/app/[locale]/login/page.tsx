@@ -1,9 +1,9 @@
-import { LoginForm } from '@/components/login-form'
+import Login from '@/components/login-form'
 
 const Page = () => {
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <LoginForm />
+      <Login />
     </div>
   )
 }
