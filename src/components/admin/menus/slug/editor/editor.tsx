@@ -19,7 +19,7 @@ import {
 import '@mdxeditor/editor/style.css'
 import { useRef, useState } from 'react'
 
-import FileUploadZone, { UploadedFile } from '@/components/file-upload-zone'
+import { UploadedFile } from '@/components/file-upload-zone'
 import { api, baseBackendUrl } from '@/models/axios'
 import {
   AdmonitionDirectiveDescriptor,
@@ -150,7 +150,7 @@ const Editor = () => {
           }),
         ]}
       />
-      <FileUploadZone files={files} setFiles={setFiles} />
+      {/* <FileUploadZone files={files} setFiles={setFiles} /> */}
     </div>
   )
 }
