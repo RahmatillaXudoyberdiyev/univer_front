@@ -28,7 +28,7 @@ import {
     Navigation,
     Pagination as SwiperPagination,
 } from 'swiper/modules'
-import { api } from '@/models/axios'
+import { api, baseBackendUrl } from '@/models/axios'
 
 const PhotoGallery = () => {
     const t = useTranslations()
@@ -196,7 +196,7 @@ const PhotoGallery = () => {
                                     <SwiperSlide key={idx}>
                                         <div className="relative w-full h-full">
                                             <Image
-                                                src={img}
+                                                src={`${baseBackendUrl}${img}`}
                                                 alt={`Gallery image ${idx + 1}`}
                                                 fill
                                                 className="object-contain"
