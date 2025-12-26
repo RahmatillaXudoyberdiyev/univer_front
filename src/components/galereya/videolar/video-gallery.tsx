@@ -35,7 +35,7 @@ const VideoGallery = () => {
                     sort,
                 },
             })
-            return response.data.reverse()
+            return response.data
         },
     })
 

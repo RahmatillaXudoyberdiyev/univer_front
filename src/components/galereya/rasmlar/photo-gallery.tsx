@@ -50,7 +50,7 @@ const PhotoGallery = () => {
                     sort,
                 },
             })
-            return response.data.reverse()
+            return response.data
         },
     })
 
