@@ -1,12 +1,11 @@
 'use client'
 
-import { Calculator, Info, RefreshCw } from 'lucide-react'
+import { Calculator, RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 
 const Page = () => {
-    const BX_VALUE = 412000
-
     const [inputs, setInputs] = useState({
+        bxValue: '412000',
         x6: '',
         x10: '',
         xa: '',
@@ -19,7 +18,6 @@ const Page = () => {
     })
 
     const [result, setResult] = useState<number | null>(null)
-    const [showInfo, setShowInfo] = useState(false)
 
     const handleInputChange = (field: string, value: string) => {
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
@@ -30,6 +28,7 @@ const Page = () => {
 
     const calculateResult = () => {
         const values = {
+            bx: parseFloat(inputs.bxValue) || 0,
             x6: parseFloat(inputs.x6) || 0,
             x10: parseFloat(inputs.x10) || 0,
             xa: parseFloat(inputs.xa) || 0,
@@ -46,7 +45,7 @@ const Page = () => {
         const difference = sumPositive - sumNegative
 
         const calculatedResult =
-            BX_VALUE *
+            values.bx *
             difference *
             values.k1 *
             values.k0 *
@@ -58,6 +57,7 @@ const Page = () => {
 
     const resetForm = () => {
         setInputs({
+            bxValue: '412000',
             x6: '',
             x10: '',
             xa: '',
@@ -72,6 +72,11 @@ const Page = () => {
     }
 
     const fields = [
+        {
+            key: 'bxValue',
+            label: 'Bazaviy hisoblash miqdori (BHM)',
+            desc: 'BHM miqdorini kiriting (so\'m)',
+        },
         {
             key: 'x6',
             label: 'Binoning umumiy hajmi',
@@ -99,7 +104,7 @@ const Page = () => {
         },
         {
             key: 'k1',
-            label: 'Q2urilish turi koeffitsienti',
+            label: 'Qurilish turi koeffitsienti',
             desc: "Qurilish turi bo'yicha koeffitsient",
         },
         {
@@ -122,10 +127,9 @@ const Page = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 md:p-8">
             <div className="max-w-5xl mx-auto">
-                {/* Header */}
                 <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6">
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl">
+                        <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 p-3 rounded-xl">
                             <Calculator className="w-8 h-8 text-white" />
                         </div>
                         <div>
@@ -138,33 +142,8 @@ const Page = () => {
                             </p>
                         </div>
                     </div>
-
-                    <button
-                        onClick={() => setShowInfo(!showInfo)}
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
-                    >
-                        <Info className="w-4 h-4" />
-                        {showInfo ? "Ma'lumotni yashirish" : 'Hisoblash haqida'}
-                    </button>
-
-                    {showInfo && (
-                        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <p className="text-sm text-gray-700 mb-2">
-                                <strong>Bazaviy hisoblash miqdori:</strong>{' '}
-                                412,000 so'm
-                            </p>
-                            <p className="text-xs text-gray-600">
-                                Ushbu kalkulyator Samarqand viloyatida
-                                muhandislik-kommunikatsiya tarmoqlari va
-                                transport infratuzilmasini yaratish
-                                xarajatlarining bir qismini hisoblash uchun
-                                mo'ljallangan.
-                            </p>
-                        </div>
-                    )}
                 </div>
 
-                {/* Input Fields */}
                 <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6">
                     <h2 className="text-xl font-bold text-gray-800 mb-6">
                         Ma'lumotlarni kiriting
@@ -188,7 +167,7 @@ const Page = () => {
                                         )
                                     }
                                     placeholder="0.00"
-                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-lg"
+                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-lg"
                                 />
                                 <p className="text-xs text-gray-500">
                                     {field.desc}
@@ -197,11 +176,10 @@ const Page = () => {
                         ))}
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 mt-8">
                         <button
                             onClick={calculateResult}
-                            className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                         >
                             Hisoblash
                         </button>
@@ -215,7 +193,6 @@ const Page = () => {
                     </div>
                 </div>
 
-                {/* Result */}
                 {result !== null && (
                     <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-2xl p-8 text-white animate-fade-in">
                         <h3 className="text-lg font-semibold mb-2 opacity-90">
