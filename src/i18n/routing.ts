@@ -6,3 +6,4 @@ export const routing = defineRouting({
     defaultLocale: 'uz',
     localeDetection: false,
 })
+ 
