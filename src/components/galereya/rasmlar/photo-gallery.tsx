@@ -3,12 +3,12 @@
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
     PaginationItem,
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination'
+import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -16,19 +16,18 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import placeholderImage from '../../../../public/image.png'
-import { useQuery } from '@tanstack/react-query'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
+import { api, baseBackendUrl } from '@/models/axios'
 import {
     A11y,
     Autoplay,
     Navigation,
     Pagination as SwiperPagination,
 } from 'swiper/modules'
-import { api, baseBackendUrl } from '@/models/axios'
 
 const PhotoGallery = () => {
     const t = useTranslations()
@@ -73,7 +72,10 @@ const PhotoGallery = () => {
                     <div className="inline-flex rounded-lg bg-gray-100 dark:bg-[#0A0A3D] p-1">
                         {[
                             { label: t('Rasmlar'), href: '/galereya/rasmlar' },
-                            { label: t('Videolar'), href: '/galereya/videolar' },
+                            {
+                                label: t('Videolar'),
+                                href: '/galereya/videolar',
+                            },
                         ].map((tab) => (
                             <Link
                                 key={tab.href}
@@ -104,8 +106,10 @@ const PhotoGallery = () => {
                             <div className="relative group overflow-hidden rounded-lg">
                                 <div className="aspect-video w-full relative overflow-hidden bg-gray-200 rounded-lg">
                                     <Image
-                                        // Using the first image in the url array as the thumbnail
-                                        src={item.url?.[0] || placeholderImage}
+                                        src={
+                                            `${baseBackendUrl}${item.url?.[0]}` ||
+                                            placeholderImage
+                                        }
                                         alt={item.title || 'Gallery Image'}
                                         fill
                                         className="object-cover"
@@ -127,17 +131,35 @@ const PhotoGallery = () => {
                             <PaginationContent>
                                 <PaginationItem>
                                     <PaginationPrevious
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        className={`cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                                        onClick={() =>
+                                            handlePageChange(currentPage - 1)
+                                        }
+                                        className={`cursor-pointer ${
+                                            currentPage === 1
+                                                ? 'pointer-events-none opacity-50'
+                                                : ''
+                                        }`}
                                     />
                                 </PaginationItem>
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                                    if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                                {Array.from(
+                                    { length: totalPages },
+                                    (_, i) => i + 1
+                                ).map((page) => {
+                                    if (
+                                        page === 1 ||
+                                        page === totalPages ||
+                                        (page >= currentPage - 1 &&
+                                            page <= currentPage + 1)
+                                    ) {
                                         return (
                                             <PaginationItem key={page}>
                                                 <PaginationLink
-                                                    onClick={() => handlePageChange(page)}
-                                                    isActive={page === currentPage}
+                                                    onClick={() =>
+                                                        handlePageChange(page)
+                                                    }
+                                                    isActive={
+                                                        page === currentPage
+                                                    }
                                                     className="cursor-pointer"
                                                 >
                                                     {page}
@@ -149,8 +171,14 @@ const PhotoGallery = () => {
                                 })}
                                 <PaginationItem>
                                     <PaginationNext
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        className={`cursor-pointer ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                                        onClick={() =>
+                                            handlePageChange(currentPage + 1)
+                                        }
+                                        className={`cursor-pointer ${
+                                            currentPage === totalPages
+                                                ? 'pointer-events-none opacity-50'
+                                                : ''
+                                        }`}
                                     />
                                 </PaginationItem>
                             </PaginationContent>
@@ -179,31 +207,50 @@ const PhotoGallery = () => {
                                 onClick={() => setSelectedGallery(null)}
                                 className="absolute top-4 right-4 z-[110] text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                     <line x1="6" y1="6" x2="18" y2="18"></line>
                                 </svg>
                             </button>
 
                             <Swiper
-                                modules={[SwiperPagination, Navigation, A11y, Autoplay]}
+                                modules={[
+                                    SwiperPagination,
+                                    Navigation,
+                                    A11y,
+                                    Autoplay,
+                                ]}
                                 navigation
                                 pagination={{ clickable: true }}
                                 className="w-full h-full"
                                 loop
                             >
-                                {selectedGallery.url?.map((img: string, idx: number) => (
-                                    <SwiperSlide key={idx}>
-                                        <div className="relative w-full h-full">
-                                            <Image
-                                                src={`${baseBackendUrl}${img}`}
-                                                alt={`Gallery image ${idx + 1}`}
-                                                fill
-                                                className="object-contain"
-                                            />
-                                        </div>
-                                    </SwiperSlide>
-                                ))}
+                                {selectedGallery.url?.map(
+                                    (img: string, idx: number) => (
+                                        <SwiperSlide key={idx}>
+                                            <div className="relative w-full h-full">
+                                                <Image
+                                                    src={`${baseBackendUrl}${img}`}
+                                                    alt={`Gallery image ${
+                                                        idx + 1
+                                                    }`}
+                                                    fill
+                                                    className="object-contain"
+                                                />
+                                            </div>
+                                        </SwiperSlide>
+                                    )
+                                )}
                             </Swiper>
                         </motion.div>
                     </motion.div>
