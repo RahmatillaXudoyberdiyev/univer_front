@@ -30,19 +30,9 @@ const Login = () => {
         })
       )
       toastSuccess(t('loginSuccess'))
-      router.push(res.data.user.role.replace('_', '-').toLowerCase())
+      router.push('/admin')
     } catch (error: any) {
-      switch (error?.response?.data?.message) {
-        case 'User already exists':
-          toastError(t('User already exists'))
-          break
-        case 'User not found':
-          toastError(t('User not found'))
-          break
-        default:
-          toastError(t('loginError'))
-          break
-      }
+      console.log('error', error)
     } finally {
       setLoading(false)
     }
