@@ -41,6 +41,17 @@ const HeroSection = () => {
 
   return (
     <div className="mb-5">
+      <div className="w-full h-screen mb-10">
+        <video
+          src="/logo_video.mp4"
+          className="h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      </div>
+
       <Swiper
         modules={[A11y, Autoplay]}
         slidesPerView={1}
