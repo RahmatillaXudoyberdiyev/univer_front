@@ -243,6 +243,7 @@ const AdminGalereya = ({
                                                     className="z-50 cursor-pointer"
                                                     onClick={(e) => {
                                                         e.stopPropagation()
+                                                        e.preventDefault()
                                                     }}
                                                 >
                                                     <Trash2 />
