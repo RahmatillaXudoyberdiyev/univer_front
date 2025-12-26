@@ -18,7 +18,7 @@ const Page = () => {
       const res = await api.get(`/sub-menu/slug/${subMenu}`)
       return res.data
     },
-    enabled: !!subMenu, // subMenu mavjud bo'lgandagina so'rov jo'natish
+    enabled: !!subMenu,
   })
 
   if (pageData.isLoading) {
@@ -43,10 +43,9 @@ const Page = () => {
     <div className="container-cs py-10">
       <article className="prose prose-lg lg:prose-xl mx-auto">
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]} // jadval, chizilgan matn (~text~), avto-link
-          rehypePlugins={[rehypeRaw, rehypeSanitize]} // <img> va boshqa HTML ni ruxsat qilish + xavfsizlik
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw, rehypeSanitize]}
           components={{
-            // Rasmlarni responsiv qilish uchun
             img: ({ node, ...props }) => (
               <img
                 {...props}
@@ -54,7 +53,6 @@ const Page = () => {
                 className="max-w-full h-auto rounded-lg shadow-md my-6"
               />
             ),
-            // Jadvalni chiroyli qilish
             table: ({ children }) => (
               <div className="overflow-x-auto my-8">
                 <table className="min-w-full divide-y divide-gray-300 border border-gray-300 rounded-lg">
