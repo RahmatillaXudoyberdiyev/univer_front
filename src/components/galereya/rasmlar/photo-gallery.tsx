@@ -18,7 +18,6 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import placeholderImage from '../../../../public/image.png'
 import { useQuery } from '@tanstack/react-query'
 
-
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -39,7 +38,7 @@ const PhotoGallery = () => {
     const activeTab = 'rasmlar'
     const sort = 'desc'
 
-    const { data: photoData = [], isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         enabled: activeTab === 'rasmlar',
         queryKey: ['images', activeTab, currentPage, pageSize, sort],
         queryFn: async () => {
@@ -54,25 +53,27 @@ const PhotoGallery = () => {
         },
     })
 
-    const totalPages = Math.ceil(photoData.length / pageSize) || 1
+    // Correctly pathing to the data and total count
+    const photoItems = data?.data || []
+    const totalItems = data?.total || 0
+    const totalPages = Math.ceil(totalItems / pageSize) || 1
 
     const handlePageChange = (page: number) => {
-        if (page >= 1 && (totalPages ? page <= totalPages : true)) {
+        if (page >= 1 && page <= totalPages) {
             setCurrentPage(page)
         }
     }
+
+    if (isLoading) return <div className="text-center py-20">Loading...</div>
 
     return (
         <div className="container-cs py-5 mb-5">
             <div>
                 <div className="flex justify-center mb-8">
-                    <div className="inline-flex rounded-lg bg-gray-100 dark:bg-[#0A0A3D]  p-1">
+                    <div className="inline-flex rounded-lg bg-gray-100 dark:bg-[#0A0A3D] p-1">
                         {[
                             { label: t('Rasmlar'), href: '/galereya/rasmlar' },
-                            {
-                                label: t('Videolar'),
-                                href: '/galereya/videolar',
-                            },
+                            { label: t('Videolar'), href: '/galereya/videolar' },
                         ].map((tab) => (
                             <Link
                                 key={tab.href}
@@ -88,8 +89,9 @@ const PhotoGallery = () => {
                         ))}
                     </div>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-                    {photoData.map((item: any) => (
+                    {photoItems.map((item: any) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, y: 20 }}
@@ -99,102 +101,71 @@ const PhotoGallery = () => {
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setSelectedGallery(item)}
                         >
-                            <div className="relative group overflow-hidden rounded-lg ">
-                                <div className="aspect-video w-full overflow-hidden bg-gray-200 rounded-lg">
+                            <div className="relative group overflow-hidden rounded-lg">
+                                <div className="aspect-video w-full relative overflow-hidden bg-gray-200 rounded-lg">
                                     <Image
-                                        src={item.mainImage || placeholderImage}
-                                        alt={item.alt || 'Gallery Image'}
+                                        // Using the first image in the url array as the thumbnail
+                                        src={item.url?.[0] || placeholderImage}
+                                        alt={item.title || 'Gallery Image'}
                                         fill
                                         className="object-cover"
                                     />
                                 </div>
                                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <span className="text-white bg-black/50 px-3 py-1 rounded-full text-sm">
-                                        {item.images?.length || 0} Photos
+                                        {item.url?.length || 0} Photos
                                     </span>
                                 </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
-                <div className="mt-8 flex justify-center">
-                    <Pagination>
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious
-                                    onClick={() =>
-                                        handlePageChange(currentPage - 1)
+
+                {totalPages > 1 && (
+                    <div className="mt-8 flex justify-center">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        className={`cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                                    />
+                                </PaginationItem>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                    if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                                        return (
+                                            <PaginationItem key={page}>
+                                                <PaginationLink
+                                                    onClick={() => handlePageChange(page)}
+                                                    isActive={page === currentPage}
+                                                    className="cursor-pointer"
+                                                >
+                                                    {page}
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                        )
                                     }
-                                    className={`cursor-pointer ${
-                                        currentPage === 1
-                                            ? 'pointer-events-none opacity-50'
-                                            : ''
-                                    }`}
-                                />
-                            </PaginationItem>
-                            {Array.from(
-                                { length: totalPages },
-                                (_, i) => i + 1
-                            ).map((page) => {
-                                if (
-                                    page === 1 ||
-                                    page === totalPages ||
-                                    (page >= currentPage - 1 &&
-                                        page <= currentPage + 1)
-                                ) {
-                                    return (
-                                        <PaginationItem key={page}>
-                                            <PaginationLink
-                                                onClick={() =>
-                                                    handlePageChange(page)
-                                                }
-                                                isActive={page === currentPage}
-                                                className="cursor-pointer"
-                                            >
-                                                {page}
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    )
-                                }
-                                if (
-                                    (page === currentPage - 2 &&
-                                        currentPage > 3) ||
-                                    (page === currentPage + 2 &&
-                                        currentPage < totalPages - 2)
-                                ) {
-                                    return (
-                                        <PaginationItem
-                                            key={`ellipsis-${page}`}
-                                        >
-                                            <PaginationEllipsis />
-                                        </PaginationItem>
-                                    )
-                                }
-                                return null
-                            })}
-                            <PaginationItem>
-                                <PaginationNext
-                                    onClick={() =>
-                                        handlePageChange(currentPage + 1)
-                                    }
-                                    className={`cursor-pointer ${
-                                        currentPage === totalPages
-                                            ? 'pointer-events-none opacity-50'
-                                            : ''
-                                    }`}
-                                />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                </div>
+                                    return null
+                                })}
+                                <PaginationItem>
+                                    <PaginationNext
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        className={`cursor-pointer ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
             </div>
+
             <AnimatePresence>
                 {selectedGallery && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
                         onClick={() => setSelectedGallery(null)}
                     >
                         <motion.div
@@ -206,50 +177,33 @@ const PhotoGallery = () => {
                         >
                             <button
                                 onClick={() => setSelectedGallery(null)}
-                                className="absolute top-4 right-4 z-110 text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors"
+                                className="absolute top-4 right-4 z-[110] text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                     <line x1="6" y1="6" x2="18" y2="18"></line>
                                 </svg>
                             </button>
 
                             <Swiper
-                                modules={[
-                                    SwiperPagination,
-                                    Navigation,
-                                    A11y,
-                                    Autoplay,
-                                ]}
+                                modules={[SwiperPagination, Navigation, A11y, Autoplay]}
                                 navigation
                                 pagination={{ clickable: true }}
                                 className="w-full h-full"
                                 loop
                             >
-                                {selectedGallery.images?.map(
-                                    (img: string, idx: number) => (
-                                        <SwiperSlide key={idx}>
-                                            <div className="relative w-full h-full">
-                                                <Image
-                                                    src={img}
-                                                    alt={`${selectedGallery.alt}-${idx}`}
-                                                    fill
-                                                    className="object-contain"
-                                                />
-                                            </div>
-                                        </SwiperSlide>
-                                    )
-                                )}
+                                {selectedGallery.url?.map((img: string, idx: number) => (
+                                    <SwiperSlide key={idx}>
+                                        <div className="relative w-full h-full">
+                                            <Image
+                                                src={img}
+                                                alt={`Gallery image ${idx + 1}`}
+                                                fill
+                                                className="object-contain"
+                                            />
+                                        </div>
+                                    </SwiperSlide>
+                                ))}
                             </Swiper>
                         </motion.div>
                     </motion.div>

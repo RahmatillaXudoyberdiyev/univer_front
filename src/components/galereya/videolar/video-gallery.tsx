@@ -24,7 +24,7 @@ const VideoGallery = () => {
     const activeTab = 'videolar'
     const sort = 'desc'
 
-    const { data: videoData = [], isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         enabled: activeTab === 'videolar',
         queryKey: ['videos', activeTab, currentPage, pageSize, sort],
         queryFn: async () => {
@@ -35,18 +35,23 @@ const VideoGallery = () => {
                     sort,
                 },
             })
-            return response.data
+            return response.data 
         },
     })
 
-    const totalPages = Math.ceil(videoData.length / pageSize) || 1
+    const videos = data?.data || []
+    const totalItems = data?.total || 0
+    const totalPages = Math.ceil(totalItems / pageSize) || 1
+
     const t = useTranslations()
 
     const handlePageChange = (page: number) => {
-        if (page >= 1 && (totalPages ? page <= totalPages : true)) {
+        if (page >= 1 && page <= totalPages) {
             setCurrentPage(page)
         }
     }
+
+    if (isLoading) return <div className="text-center py-20">Loading...</div>
 
     return (
         <div className="container-cs py-5 mb-5">
@@ -57,7 +62,7 @@ const VideoGallery = () => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setSelectedVideo(null)}
-                        className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
                     >
                         <motion.div
                             initial={{ scale: 0.9 }}
@@ -83,15 +88,13 @@ const VideoGallery = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
             <div>
                 <div className="flex justify-center mb-8">
                     <div className="inline-flex rounded-lg bg-gray-100 dark:bg-[#0A0A3D] p-1">
                         {[
                             { label: t('Rasmlar'), href: '/galereya/rasmlar' },
-                            {
-                                label: t('Videolar'),
-                                href: '/galereya/videolar',
-                            },
+                            { label: t('Videolar'), href: '/galereya/videolar' },
                         ].map((tab) => (
                             <Link
                                 key={tab.href}
@@ -109,104 +112,78 @@ const VideoGallery = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-                    {videoData.map((video: any) => (
-                        <motion.div
-                            key={video.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-100px' }}
-                            whileHover={{ scale: 1.02 }}
-                            className="flex flex-col cursor-pointer group"
-                            onClick={() => setSelectedVideo(video.youtubeId)}
-                        >
-                            <div className="relative overflow-hidden rounded-xl aspect-video bg-gray-200">
-                                <img
-                                    src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
-                                    alt={video.title}
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
-                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                                        <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-[#2B2B7A] border-b-8 border-b-transparent ml-1"></div>
+                    {videos.map((video: any) => {
+                        const youtubeId = video.url?.[0]
+
+                        return (
+                            <motion.div
+                                key={video.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: '-100px' }}
+                                whileHover={{ scale: 1.02 }}
+                                className="flex flex-col cursor-pointer group"
+                                onClick={() => setSelectedVideo(youtubeId)}
+                            >
+                                <div className="relative overflow-hidden rounded-xl aspect-video bg-gray-200">
+                                    <img
+                                        src={`https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`}
+                                        alt={video.title || "Gallery Video"}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
+                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                                            <div className="w-0 h-0 border-t-8 border-t-transparent border-l-[12px] border-l-[#2B2B7A] border-b-8 border-b-transparent ml-1"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        )
+                    })}
                 </div>
 
-                <div className="mt-8 flex justify-center">
-                    <Pagination>
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious
-                                    onClick={() =>
-                                        handlePageChange(currentPage - 1)
-                                    }
-                                    className={`cursor-pointer ${
-                                        currentPage === 1
-                                            ? 'pointer-events-none opacity-50'
-                                            : ''
-                                    }`}
-                                />
-                            </PaginationItem>
+                {totalPages > 1 && (
+                    <div className="mt-8 flex justify-center">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        className={`cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                                    />
+                                </PaginationItem>
 
-                            {Array.from(
-                                { length: totalPages },
-                                (_, i) => i + 1
-                            ).map((page) => {
-                                if (
-                                    page === 1 ||
-                                    page === totalPages ||
-                                    (page >= currentPage - 1 &&
-                                        page <= currentPage + 1)
-                                ) {
-                                    return (
-                                        <PaginationItem key={page}>
-                                            <PaginationLink
-                                                onClick={() =>
-                                                    handlePageChange(page)
-                                                }
-                                                isActive={page === currentPage}
-                                                className="cursor-pointer"
-                                            >
-                                                {page}
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    )
-                                }
-                                if (
-                                    (page === currentPage - 2 &&
-                                        currentPage > 3) ||
-                                    (page === currentPage + 2 &&
-                                        currentPage < totalPages - 2)
-                                ) {
-                                    return (
-                                        <PaginationItem
-                                            key={`ellipsis-${page}`}
-                                        >
-                                            <PaginationEllipsis />
-                                        </PaginationItem>
-                                    )
-                                }
-                                return null
-                            })}
-
-                            <PaginationItem>
-                                <PaginationNext
-                                    onClick={() =>
-                                        handlePageChange(currentPage + 1)
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                    if (
+                                        page === 1 ||
+                                        page === totalPages ||
+                                        (page >= currentPage - 1 && page <= currentPage + 1)
+                                    ) {
+                                        return (
+                                            <PaginationItem key={page}>
+                                                <PaginationLink
+                                                    onClick={() => handlePageChange(page)}
+                                                    isActive={page === currentPage}
+                                                    className="cursor-pointer"
+                                                >
+                                                    {page}
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                        )
                                     }
-                                    className={`cursor-pointer ${
-                                        currentPage === totalPages
-                                            ? 'pointer-events-none opacity-50'
-                                            : ''
-                                    }`}
-                                />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                </div>
+                                    return null
+                                })}
+
+                                <PaginationItem>
+                                    <PaginationNext
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        className={`cursor-pointer ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
             </div>
         </div>
     )
