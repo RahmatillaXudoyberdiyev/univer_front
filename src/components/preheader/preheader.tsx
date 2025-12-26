@@ -1,4 +1,6 @@
 'use client'
+import { api } from '@/models/axios'
+import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ImageIcon, Mail, MapPin, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -9,6 +11,13 @@ import { Button } from '../ui/button'
 import { SidebarTrigger } from '../ui/sidebar'
 
 const Preheader = () => {
+    const detailsData = useQuery({
+        queryKey: ['details'],
+        queryFn: async () => {
+            const res = await api.get('/details')
+            return res.data
+        },
+    })
     const [isOpen, setIsOpen] = useState(false)
     const [showMap, setShowMap] = useState(false)
     const t = useTranslations()
@@ -78,7 +87,7 @@ const Preheader = () => {
                     </AnimatePresence>
                 </div>
                 <h1 className="flex justify-center items-center gap-2">
-                    <Mail size={16} /> info@saminvest.uz
+                    <Mail size={16} /> {detailsData.data?.infoEmails}
                 </h1>
                 <div className="flex gap-2">
                     <LanguageSwitcher />
