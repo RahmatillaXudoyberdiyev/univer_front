@@ -1,70 +1,79 @@
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+'use client'
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+import { AutoForm } from '@/components/form/auto-form'
+import useNotify from '@/hooks/use-notify'
+import { api } from '@/models/axios'
+import Cookies from 'js-cookie'
+import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+
+const Login = () => {
+  const t = useTranslations()
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const form = useForm()
+  const { toastError, toastSuccess } = useNotify()
+
+  const onSubmit = async (values: any) => {
+    try {
+      setLoading(true)
+      const res = await api.post(`/auth/login`, values)
+      Cookies.set('saminvest-token', res.data.token)
+      Cookies.set(
+        'saminvest-log-data',
+        JSON.stringify({
+          username: res.data.user.username,
+          role: res.data.user.role,
+          token: res.data.token,
+        })
+      )
+      toastSuccess(t('loginSuccess'))
+      router.push(res.data.user.role.replace('_', '-').toLowerCase())
+    } catch (error: any) {
+      switch (error?.response?.data?.message) {
+        case 'User already exists':
+          toastError(t('User already exists'))
+          break
+        case 'User not found':
+          toastError(t('User not found'))
+          break
+        default:
+          toastError(t('loginError'))
+          break
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password" required />
-              </Field>
-              <Field>
-                <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
-                </Button>
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="max-w-[450px] w-full bg-background z-50 p-5 rounded-lg">
+      <div className="text-center text-2xl font-bold my-5">{t('login')}</div>
+
+      <AutoForm
+        className={'border-none px-1 py-0 bg-transparent'}
+        form={form}
+        submitText={t('login')}
+        onSubmit={onSubmit}
+        loading={loading}
+        fields={[
+          {
+            name: 'username',
+            type: 'text',
+            label: t('username'),
+            placeholder: t('username'),
+          },
+          {
+            name: 'password',
+            type: 'password',
+            label: t('password'),
+            placeholder: t('password'),
+          },
+        ]}
+      />
     </div>
   )
 }
+
+export default Login
