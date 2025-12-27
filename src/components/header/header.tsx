@@ -120,7 +120,7 @@ const Header = () => {
                                         <ul className="py-2">
                                             {Object.entries(menu.items)
                                                 .filter(
-                                                    ([key]) => key !== 'default'
+                                                    ([key]) => key !== 'default' && key !== 'hasSubMenu'
                                                 )
                                                 .map(
                                                     (
