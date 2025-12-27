@@ -23,16 +23,19 @@ const Header = () => {
         {
             title: t('Bosh sahifa'),
             items: { default: '/' },
+            hasSubMenu: false,
         },
         {
             title: t('Kalkulyator'),
             items: { default: '/calc' },
+            hasSubMenu: false,
         },
 
         ...(menus.data?.map((menu: any) => ({
             title: menu.name?.[locale] || menu.name?.uz || t('Nomalum'),
             items: {
                 default: `/${menu.slug}`,
+                hasSubMenu: true,
                 ...(menu.submenus?.reduce(
                     (acc: Record<string, string>, submenu: any) => {
                         const submenuTitle =
@@ -53,6 +56,7 @@ const Header = () => {
                 Foto: '/galereya/rasmlar',
                 Video: '/galereya/videolar',
             },
+            hasSubMenu: true,
         },
     ]
 
@@ -73,7 +77,7 @@ const Header = () => {
                                 }
                                 onMouseLeave={() => setActiveMenu(null)}
                             >
-                                {menu.items['default'] ? (
+                                {menu.items['default'] && !menu.hasSubMenu ? (
                                     <Link
                                         href={menu.items['default']}
                                         className="flex items-center gap-1.5 px-4 py-5 hover:bg-white/5 transition-colors duration-200 whitespace-nowrap"
