@@ -1,3 +1,5 @@
+import SnowAnimation from '@/components/animations/snow-animation'
+import Chatbot from '@/components/chatbot/chatbot'
 import Footer from '@/components/footer/footer'
 import Header from '@/components/header/header'
 import Postfooter from '@/components/postfooter/postfooter'
@@ -5,7 +7,6 @@ import Prefooter from '@/components/prefooter/prefooter'
 import Preheader from '@/components/preheader/preheader'
 import Providers from '@/components/providers/providers'
 import '../../globals.css'
-import Chatbot from '@/components/chatbot/chatbot'
 
 export default function PublicLayout({
     children,
@@ -14,6 +15,7 @@ export default function PublicLayout({
 }>) {
     return (
         <Providers>
+            <SnowAnimation />
             <Preheader />
             <Header />
             {children}
