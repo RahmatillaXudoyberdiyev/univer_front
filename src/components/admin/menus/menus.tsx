@@ -290,7 +290,9 @@ const AdminMenus = () => {
                         form={form}
                         onSubmit={(values: Record<string, any>) => {
                             console.log(values)
-
+                            const slug_cleaned = values.slug
+                                .replace(/[^a-zA-Z0-9]+/g, '-')
+                                .replace(/^-+|-+$/g, '')
                             if (editing) {
                                 updateMenu.mutate({
                                     id: editing,
@@ -301,7 +303,7 @@ const AdminMenus = () => {
                                             ru: values.ru,
                                             en: values.en,
                                         } as any,
-                                        slug: values.slug,
+                                        slug: slug_cleaned,
                                     } as any,
                                 })
                             } else {
@@ -312,7 +314,7 @@ const AdminMenus = () => {
                                         ru: values.ru,
                                         en: values.en,
                                     },
-                                    slug: values.slug,
+                                    slug: slug_cleaned,
                                 })
                             }
                         }}
