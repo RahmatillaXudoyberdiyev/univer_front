@@ -110,6 +110,97 @@ const regionData: { [key: string]: RegionGroup } = {
             },
         ],
     },
+    'akdarinskiy-rayon': {
+        regionName: 'Oqdaryo tumani',
+        officials: [
+            {
+                name: "Jo'rayev Bahodir Nishonovich",
+                title: "Oqdaryo tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 90 474 58 00',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'pastdargomskiy-rayon': {
+        regionName: "Pastdarg'om  tumani",
+        officials: [
+            {
+                name: 'Gafurov Aziz Mahmudjonovich',
+                title: "Pastdarg'om tumani hokimining o'rinbosari - Investitsiyalar va tashqi savdo bo'limi boshlig'i",
+                phone: '+998 91 527 72 34',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'djambayskiy-rayon': {
+        regionName: 'Jomboy tumani',
+        officials: [
+            {
+                name: 'Kodirov Jonibek Xamdamovich',
+                title: "Jomboy tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 88 866 77 99',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'samarkandskiy-rayon': {
+        regionName: 'Samarkand tumani',
+        officials: [
+            {
+                name: 'Radjabov Erkinjon Fozilovich',
+                title: "Samarqand shahar hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 91 527 72 34',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+            {
+                name: 'Zaripov Navruzjon Zayniyevich',
+                title: "Samarqand tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 91 527 72 34',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    'bulungurskiy-rayon': {
+        regionName: "Bulung'ur tumani",
+        officials: [
+            {
+                name: 'Razzaqov Shavkat Abdig\'afforovich',
+                title: "Bulung'ur tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 88 866 77 99',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    "taylakskiy-rayon": {
+        regionName: "Tayloq tumani",
+        officials: [
+            {
+                name: "Sattorov Jaxongir Shuxrat o'g'li",
+                title: "Tayloq tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 88 866 77 99',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    },
+    "urgutskiy-rayon": {
+        regionName: "Urgut tumani",
+        officials: [
+            {
+                name: "Suyunov Obidjon Toxirovich",
+                title: "Urgut tumani hokimining o'rinbosari - Investitsiyalar, sanoat va savdo bo'limi boshlig'i",
+                phone: '+998 88 866 77 99',
+                email: 'info@saminvest.uz',
+                img: '',
+            },
+        ],
+    }
 }
 
 const RegionalSection = () => {
