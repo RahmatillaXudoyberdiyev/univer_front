@@ -90,17 +90,33 @@ const MainDetails = () => {
         mutationFn: async (data: FormValues) => {
             return api.patch('/details', data)
         },
-        onSuccess: () => {
+        onSuccess: (response) => {
             toastSuccess('Details updated successfully')
-            details.refetch()
+            form.reset(response.data)
         },
     })
 
     useEffect(() => {
         if (details.data) {
-            form.reset(details.data)
+            const safeData: FormValues = {
+                receptionPhone: details.data.receptionPhone || '',
+                infoEmails: details.data.infoEmails || '',
+                trustLinePhones: details.data.trustLinePhones?.length
+                    ? details.data.trustLinePhones
+                    : [''],
+                corporateEmails: details.data.corporateEmails?.length
+                    ? details.data.corporateEmails
+                    : [''],
+                workingHours: {
+                    uz: details.data.workingHours?.uz || '',
+                    oz: details.data.workingHours?.oz || '',
+                    ru: details.data.workingHours?.ru || '',
+                    en: details.data.workingHours?.en || '',
+                },
+            }
+            form.reset(safeData)
         }
-    }, [details.data, form])
+    }, [details.data])
 
     const onSubmit = (data: FormValues) => {
         updateDetails.mutate(data)
