@@ -30,17 +30,13 @@ const LANGUAGES = [
 
 const formSchema = z.object({
     receptionPhone: z.string().min(1, 'Reception phone majburiy'),
-
     infoEmails: z.string().min(1, 'Email majburiy'),
-
     trustLinePhones: z
         .array(z.string().min(1, 'Telefon bo‘sh bo‘lmasin'))
         .min(1, 'Kamida bitta telefon bo‘lishi kerak'),
-
     corporateEmails: z
         .array(z.string().min(1, 'Email bo‘sh bo‘lmasin'))
         .min(1, 'Kamida bitta email bo‘lishi kerak'),
-
     workingHours: z.object({
         uz: z.string().min(1, 'UZ majburiy'),
         oz: z.string().min(1, 'OZ majburiy'),
@@ -55,7 +51,7 @@ const MainDetails = () => {
     const { toastSuccess, toastError } = useNotify()
     const t = useTranslations()
 
-    const form = useForm<any>({
+    const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             receptionPhone: '',
@@ -66,16 +62,16 @@ const MainDetails = () => {
         },
     })
 
-    const { errors, isSubmitting }: any = form.formState
+    const { errors, isSubmitting } = form.formState
 
     const trustLineArray = useFieldArray({
         control: form.control,
-        name: 'trustLinePhones',
+        name: 'trustLinePhones' as never,
     })
 
     const corporateEmailsArray = useFieldArray({
         control: form.control,
-        name: 'corporateEmails',
+        name: 'corporateEmails' as never,
     })
 
     const details = useQuery({
@@ -97,9 +93,8 @@ const MainDetails = () => {
     })
 
     useEffect(() => {
-
         if (details.data) {
-            const safeData: FormValues = {
+            form.reset({
                 receptionPhone: details.data.receptionPhone || '',
                 infoEmails: details.data.infoEmails || '',
                 trustLinePhones: details.data.trustLinePhones?.length
@@ -114,10 +109,9 @@ const MainDetails = () => {
                     ru: details.data.workingHours?.ru || '',
                     en: details.data.workingHours?.en || '',
                 },
-            }
-            form.reset(safeData)
+            })
         }
-    }, [details.data])
+    }, [details.data, form])
 
     const onSubmit = (data: FormValues) => {
         updateDetails.mutate(data)
@@ -136,7 +130,7 @@ const MainDetails = () => {
         }
     }
 
-    if (details.isLoading || !details.data) {
+    if (details.isLoading) {
         return (
             <div className="flex h-screen items-center justify-center">
                 <Loader2 className="animate-spin h-8 w-8 text-[#372AAC]" />
@@ -206,92 +200,74 @@ const MainDetails = () => {
                 </Card>
 
                 <Card>
-                    <CardHeader className="flex justify-between">
+                    <CardHeader className="flex justify-between flex-row items-center">
                         <CardTitle>{t('Trust Line Phones')}</CardTitle>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => trustLineArray.append('')}
                         >
-                            <Plus /> {t('Add')}
+                            <Plus className="w-4 h-4 mr-1" /> {t('Add')}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {trustLineArray.fields.map(
-                            (field: Record<string, any>, idx: number) => (
-                                <div key={field.id}>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            {...form.register(
-                                                `trustLinePhones.${idx}`
-                                            )}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            onClick={() =>
-                                                trustLineArray.remove(idx)
-                                            }
-                                        >
-                                            <Trash2 className="text-red-500" />
-                                        </Button>
-                                    </div>
-                                    {errors.trustLinePhones?.[idx] && (
-                                        <p className="text-sm text-red-500 mt-1">
-                                            {
-                                                errors.trustLinePhones[idx]
-                                                    ?.message
-                                            }
-                                        </p>
-                                    )}
+                        {trustLineArray.fields.map((field, idx) => (
+                            <div key={field.id}>
+                                <div className="flex gap-2">
+                                    <Input
+                                        {...form.register(`trustLinePhones.${idx}` as const)}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => trustLineArray.remove(idx)}
+                                    >
+                                        <Trash2 className="text-red-500 w-4 h-4" />
+                                    </Button>
                                 </div>
-                            )
-                        )}
+                                {errors.trustLinePhones?.[idx] && (
+                                    <p className="text-sm text-red-500 mt-1">
+                                        {errors.trustLinePhones[idx]?.message}
+                                    </p>
+                                )}
+                            </div>
+                        ))}
                     </CardContent>
                 </Card>
 
                 <Card className="col-span-1">
-                    <CardHeader className="flex justify-between">
+                    <CardHeader className="flex justify-between flex-row items-center">
                         <CardTitle>{t('Corporate Emails')}</CardTitle>
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => corporateEmailsArray.append('')}
                         >
-                            <Plus /> {t('Add')}
+                            <Plus className="w-4 h-4 mr-1" /> {t('Add')}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {corporateEmailsArray.fields.map(
-                            (field: Record<string, any>, idx: number) => (
-                                <div key={field.id}>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            {...form.register(
-                                                `corporateEmails.${idx}`
-                                            )}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            onClick={() =>
-                                                corporateEmailsArray.remove(idx)
-                                            }
-                                        >
-                                            <Trash2 className="text-red-500" />
-                                        </Button>
-                                    </div>
-                                    {errors.corporateEmails?.[idx] && (
-                                        <p className="text-sm text-red-500 mt-1">
-                                            {
-                                                errors.corporateEmails[idx]
-                                                    ?.message
-                                            }
-                                        </p>
-                                    )}
+                        {corporateEmailsArray.fields.map((field, idx) => (
+                            <div key={field.id}>
+                                <div className="flex gap-2">
+                                    <Input
+                                        {...form.register(`corporateEmails.${idx}` as const)}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => corporateEmailsArray.remove(idx)}
+                                    >
+                                        <Trash2 className="text-red-500 w-4 h-4" />
+                                    </Button>
                                 </div>
-                            )
-                        )}
+                                {errors.corporateEmails?.[idx] && (
+                                    <p className="text-sm text-red-500 mt-1">
+                                        {errors.corporateEmails[idx]?.message}
+                                    </p>
+                                )}
+                            </div>
+                        ))}
                     </CardContent>
                 </Card>
 
@@ -315,16 +291,11 @@ const MainDetails = () => {
                             {LANGUAGES.map((l) => (
                                 <TabsContent key={l.key} value={l.key}>
                                     <Input
-                                        {...form.register(
-                                            `workingHours.${l.key}`
-                                        )}
+                                        {...form.register(`workingHours.${l.key}` as const)}
                                     />
-                                    {errors.workingHours?.[l.key] && (
+                                    {errors.workingHours?.[l.key as keyof typeof errors.workingHours] && (
                                         <p className="text-sm text-red-500 mt-1">
-                                            {
-                                                errors.workingHours[l.key]
-                                                    ?.message
-                                            }
+                                            {(errors.workingHours as any)[l.key]?.message}
                                         </p>
                                     )}
                                 </TabsContent>
