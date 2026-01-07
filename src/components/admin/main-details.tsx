@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useNotify from '@/hooks/use-notify'
 import { api } from '@/models/axios'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Asterisk, Loader2, Plus, Save, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
@@ -50,6 +50,7 @@ type FormValues = z.infer<typeof formSchema>
 const MainDetails = () => {
     const { toastSuccess, toastError } = useNotify()
     const t = useTranslations()
+    const queryClient = useQueryClient()
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -77,7 +78,7 @@ const MainDetails = () => {
     const details = useQuery({
         queryKey: ['details'],
         queryFn: async () => {
-            const res = await api.get<FormValues>('/details')
+            const res = await api.get<FormValues & { id: string }>('/details')
             return res.data
         },
     })
@@ -86,30 +87,31 @@ const MainDetails = () => {
         mutationFn: async (data: FormValues) => {
             return api.patch('/details', data)
         },
-        onSuccess: (response) => {
+        onSuccess: () => {
             toastSuccess('Details updated successfully')
-            form.reset(response.data)
+            queryClient.invalidateQueries({ queryKey: ['details'] })
         },
     })
 
     useEffect(() => {
         if (details.data) {
-            form.reset({
-                receptionPhone: details.data.receptionPhone || '',
-                infoEmails: details.data.infoEmails || '',
+            const sanitizedData: FormValues = {
+                receptionPhone: String(details.data.receptionPhone || '').trim(),
+                infoEmails: String(details.data.infoEmails || '').trim(),
                 trustLinePhones: details.data.trustLinePhones?.length
-                    ? details.data.trustLinePhones
+                    ? details.data.trustLinePhones.map(p => String(p).trim())
                     : [''],
                 corporateEmails: details.data.corporateEmails?.length
-                    ? details.data.corporateEmails
+                    ? details.data.corporateEmails.map(e => String(e).trim())
                     : [''],
                 workingHours: {
-                    uz: details.data.workingHours?.uz || '',
-                    oz: details.data.workingHours?.oz || '',
-                    ru: details.data.workingHours?.ru || '',
-                    en: details.data.workingHours?.en || '',
+                    uz: String(details.data.workingHours?.uz || '').trim(),
+                    oz: String(details.data.workingHours?.oz || '').trim(),
+                    ru: String(details.data.workingHours?.ru || '').trim(),
+                    en: String(details.data.workingHours?.en || '').trim(),
                 },
-            })
+            }
+            form.reset(sanitizedData)
         }
     }, [details.data, form])
 
@@ -118,6 +120,7 @@ const MainDetails = () => {
     }
 
     const onError = (errs: any) => {
+        console.log('Validation Errors:', errs)
         const firstError =
             errs.receptionPhone?.message ||
             errs.infoEmails?.message ||
@@ -145,9 +148,7 @@ const MainDetails = () => {
         >
             <div className="flex justify-between items-end border-b pb-6">
                 <div>
-                    <h1 className="text-2xl font-bold">
-                        {t('General Settings')}
-                    </h1>
+                    <h1 className="text-2xl font-bold">{t('General Settings')}</h1>
                     <p className="text-sm text-muted-foreground">
                         {t('Manage contact details and working schedule')}
                     </p>
@@ -214,9 +215,7 @@ const MainDetails = () => {
                         {trustLineArray.fields.map((field, idx) => (
                             <div key={field.id}>
                                 <div className="flex gap-2">
-                                    <Input
-                                        {...form.register(`trustLinePhones.${idx}` as const)}
-                                    />
+                                    <Input {...form.register(`trustLinePhones.${idx}` as const)} />
                                     <Button
                                         type="button"
                                         variant="ghost"
@@ -225,11 +224,6 @@ const MainDetails = () => {
                                         <Trash2 className="text-red-500 w-4 h-4" />
                                     </Button>
                                 </div>
-                                {errors.trustLinePhones?.[idx] && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.trustLinePhones[idx]?.message}
-                                    </p>
-                                )}
                             </div>
                         ))}
                     </CardContent>
@@ -250,9 +244,7 @@ const MainDetails = () => {
                         {corporateEmailsArray.fields.map((field, idx) => (
                             <div key={field.id}>
                                 <div className="flex gap-2">
-                                    <Input
-                                        {...form.register(`corporateEmails.${idx}` as const)}
-                                    />
+                                    <Input {...form.register(`corporateEmails.${idx}` as const)} />
                                     <Button
                                         type="button"
                                         variant="ghost"
@@ -261,11 +253,6 @@ const MainDetails = () => {
                                         <Trash2 className="text-red-500 w-4 h-4" />
                                     </Button>
                                 </div>
-                                {errors.corporateEmails?.[idx] && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.corporateEmails[idx]?.message}
-                                    </p>
-                                )}
                             </div>
                         ))}
                     </CardContent>
@@ -274,9 +261,7 @@ const MainDetails = () => {
                 <Card className="col-span-2">
                     <CardHeader>
                         <CardTitle>{t('Working Hours')}</CardTitle>
-                        <CardDescription>
-                            {t('All languages are required')}
-                        </CardDescription>
+                        <CardDescription>{t('All languages are required')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Tabs defaultValue="uz">
@@ -290,14 +275,7 @@ const MainDetails = () => {
 
                             {LANGUAGES.map((l) => (
                                 <TabsContent key={l.key} value={l.key}>
-                                    <Input
-                                        {...form.register(`workingHours.${l.key}` as const)}
-                                    />
-                                    {errors.workingHours?.[l.key as keyof typeof errors.workingHours] && (
-                                        <p className="text-sm text-red-500 mt-1">
-                                            {(errors.workingHours as any)[l.key]?.message}
-                                        </p>
-                                    )}
+                                    <Input {...form.register(`workingHours.${l.key}` as const)} />
                                 </TabsContent>
                             ))}
                         </Tabs>
