@@ -100,6 +100,7 @@ export function AppSidebar() {
                             icon={<Mail size={18} className="text-amber-400" />}
                             label={t('Korporativ pochta')}
                             value={detailsData.data?.corporateEmails || ''}
+
                         />
                     </div>
                 </motion.div>
@@ -163,13 +164,13 @@ function ContactCard({
                     value.map((v, i) => (
                         <p
                             key={i}
-                            className="text-sm text-white font-medium break-all mb-1 last:mb-0"
+                            className="text-[11px] text-white font-medium break-all mb-1 last:mb-0"
                         >
                             {v}
                         </p>
                     ))
                 ) : (
-                    <p className="text-sm text-white font-medium">{value}</p>
+                    <p className="text-[11px] text-white font-medium ">{value}</p>
                 )}
             </div>
         </motion.div>
