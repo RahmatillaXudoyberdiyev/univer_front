@@ -13,13 +13,10 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useNotify from '@/hooks/use-notify'
 import { api } from '@/models/axios'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Asterisk, Loader2, Plus, Save, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { useEffect, useState } from 'react'
 
 const LANGUAGES = [
     { key: 'uz', label: "O'zbekcha" },
@@ -28,51 +25,30 @@ const LANGUAGES = [
     { key: 'en', label: 'English' },
 ] as const
 
-const formSchema = z.object({
-    receptionPhone: z.string().min(1, 'Reception phone majburiy'),
-    infoEmails: z.string().min(1, 'Email majburiy'),
-    trustLinePhones: z
-        .array(z.string().min(1, 'Telefon bo‘sh bo‘lmasin'))
-        .min(1, 'Kamida bitta telefon bo‘lishi kerak'),
-    corporateEmails: z
-        .array(z.string().min(1, 'Email bo‘sh bo‘lmasin'))
-        .min(1, 'Kamida bitta email bo‘lishi kerak'),
-    workingHours: z.object({
-        uz: z.string().min(1, 'UZ majburiy'),
-        oz: z.string().min(1, 'OZ majburiy'),
-        ru: z.string().min(1, 'RU majburiy'),
-        en: z.string().min(1, 'EN majburiy'),
-    }),
-})
-
-type FormValues = z.infer<typeof formSchema>
+type FormValues = {
+    receptionPhone: string
+    infoEmails: string
+    trustLinePhones: string[]
+    corporateEmails: string[]
+    workingHours: {
+        uz: string
+        oz: string
+        ru: string
+        en: string
+    }
+}
 
 const MainDetails = () => {
     const { toastSuccess, toastError } = useNotify()
     const t = useTranslations()
     const queryClient = useQueryClient()
 
-    const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            receptionPhone: '',
-            infoEmails: '',
-            trustLinePhones: [''],
-            corporateEmails: [''],
-            workingHours: { uz: '', oz: '', ru: '', en: '' },
-        },
-    })
-
-    const { errors, isSubmitting } = form.formState
-
-    const trustLineArray = useFieldArray({
-        control: form.control,
-        name: 'trustLinePhones' as never,
-    })
-
-    const corporateEmailsArray = useFieldArray({
-        control: form.control,
-        name: 'corporateEmails' as never,
+    const [formData, setFormData] = useState<FormValues>({
+        receptionPhone: '',
+        infoEmails: '',
+        trustLinePhones: [''],
+        corporateEmails: [''],
+        workingHours: { uz: '', oz: '', ru: '', en: '' },
     })
 
     const details = useQuery({
@@ -91,46 +67,68 @@ const MainDetails = () => {
             toastSuccess('Details updated successfully')
             queryClient.invalidateQueries({ queryKey: ['details'] })
         },
+        onError: () => {
+            toastError('Failed to update details')
+        }
     })
 
     useEffect(() => {
         if (details.data) {
-            const sanitizedData: FormValues = {
-                receptionPhone: String(details.data.receptionPhone || '').trim(),
-                infoEmails: String(details.data.infoEmails || '').trim(),
+            setFormData({
+                receptionPhone: String(details.data.receptionPhone || ''),
+                infoEmails: String(details.data.infoEmails || ''),
                 trustLinePhones: details.data.trustLinePhones?.length
-                    ? details.data.trustLinePhones.map(p => String(p).trim())
+                    ? details.data.trustLinePhones.map(p => String(p))
                     : [''],
                 corporateEmails: details.data.corporateEmails?.length
-                    ? details.data.corporateEmails.map(e => String(e).trim())
+                    ? details.data.corporateEmails.map(e => String(e))
                     : [''],
                 workingHours: {
-                    uz: String(details.data.workingHours?.uz || '').trim(),
-                    oz: String(details.data.workingHours?.oz || '').trim(),
-                    ru: String(details.data.workingHours?.ru || '').trim(),
-                    en: String(details.data.workingHours?.en || '').trim(),
+                    uz: String(details.data.workingHours?.uz || ''),
+                    oz: String(details.data.workingHours?.oz || ''),
+                    ru: String(details.data.workingHours?.ru || ''),
+                    en: String(details.data.workingHours?.en || ''),
                 },
-            }
-            form.reset(sanitizedData)
+            })
         }
-    }, [details.data, form])
+    }, [details.data])
 
-    const onSubmit = (data: FormValues) => {
-        updateDetails.mutate(data)
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        updateDetails.mutate(formData)
     }
 
-    const onError = (errs: any) => {
-        console.log('Validation Errors:', errs)
-        const firstError =
-            errs.receptionPhone?.message ||
-            errs.infoEmails?.message ||
-            errs.trustLinePhones?.[0]?.message ||
-            errs.corporateEmails?.[0]?.message ||
-            errs.workingHours?.uz?.message
+    const handleInputChange = (field: keyof FormValues, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }))
+    }
 
-        if (firstError) {
-            toastError(firstError as string)
-        }
+    const handleWorkingHoursChange = (lang: keyof FormValues['workingHours'], value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            workingHours: { ...prev.workingHours, [lang]: value }
+        }))
+    }
+
+    const handleArrayChange = (field: 'trustLinePhones' | 'corporateEmails', index: number, value: string) => {
+        setFormData(prev => {
+            const newArray = [...prev[field]]
+            newArray[index] = value
+            return { ...prev, [field]: newArray }
+        })
+    }
+
+    const addArrayItem = (field: 'trustLinePhones' | 'corporateEmails') => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: [...prev[field], '']
+        }))
+    }
+
+    const removeArrayItem = (field: 'trustLinePhones' | 'corporateEmails', index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: prev[field].filter((_, i) => i !== index)
+        }))
     }
 
     if (details.isLoading) {
@@ -143,7 +141,7 @@ const MainDetails = () => {
 
     return (
         <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
+            onSubmit={handleSubmit}
             className="container-cs py-10 space-y-6"
         >
             <div className="flex justify-between items-end border-b pb-6">
@@ -155,7 +153,7 @@ const MainDetails = () => {
                 </div>
                 <Button
                     type="submit"
-                    disabled={updateDetails.isPending || isSubmitting}
+                    disabled={updateDetails.isPending}
                     className="bg-[#372AAC] px-10 h-11 text-white"
                 >
                     {updateDetails.isPending ? (
@@ -177,12 +175,10 @@ const MainDetails = () => {
                                 {t('Reception Phone')}{' '}
                                 <Asterisk className="inline w-3 h-3 text-red-500" />
                             </Label>
-                            <Input {...form.register('receptionPhone')} />
-                            {errors.receptionPhone && (
-                                <p className="text-sm text-red-500 mt-1">
-                                    {errors.receptionPhone.message}
-                                </p>
-                            )}
+                            <Input
+                                value={formData.receptionPhone}
+                                onChange={(e) => handleInputChange('receptionPhone', e.target.value)}
+                            />
                         </div>
 
                         <div>
@@ -190,12 +186,10 @@ const MainDetails = () => {
                                 {t('Info Email')}{' '}
                                 <Asterisk className="inline w-3 h-3 text-red-500" />
                             </Label>
-                            <Input {...form.register('infoEmails')} />
-                            {errors.infoEmails && (
-                                <p className="text-sm text-red-500 mt-1">
-                                    {errors.infoEmails.message}
-                                </p>
-                            )}
+                            <Input
+                                value={formData.infoEmails}
+                                onChange={(e) => handleInputChange('infoEmails', e.target.value)}
+                            />
                         </div>
                     </CardContent>
                 </Card>
@@ -206,20 +200,23 @@ const MainDetails = () => {
                         <Button
                             type="button"
                             variant="ghost"
-                            onClick={() => trustLineArray.append('')}
+                            onClick={() => addArrayItem('trustLinePhones')}
                         >
                             <Plus className="w-4 h-4 mr-1" /> {t('Add')}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {trustLineArray.fields.map((field, idx) => (
-                            <div key={field.id}>
+                        {formData.trustLinePhones.map((phone, idx) => (
+                            <div key={idx}>
                                 <div className="flex gap-2">
-                                    <Input {...form.register(`trustLinePhones.${idx}` as const)} />
+                                    <Input
+                                        value={phone}
+                                        onChange={(e) => handleArrayChange('trustLinePhones', idx, e.target.value)}
+                                    />
                                     <Button
                                         type="button"
                                         variant="ghost"
-                                        onClick={() => trustLineArray.remove(idx)}
+                                        onClick={() => removeArrayItem('trustLinePhones', idx)}
                                     >
                                         <Trash2 className="text-red-500 w-4 h-4" />
                                     </Button>
@@ -235,20 +232,23 @@ const MainDetails = () => {
                         <Button
                             type="button"
                             variant="ghost"
-                            onClick={() => corporateEmailsArray.append('')}
+                            onClick={() => addArrayItem('corporateEmails')}
                         >
                             <Plus className="w-4 h-4 mr-1" /> {t('Add')}
                         </Button>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {corporateEmailsArray.fields.map((field, idx) => (
-                            <div key={field.id}>
+                        {formData.corporateEmails.map((email, idx) => (
+                            <div key={idx}>
                                 <div className="flex gap-2">
-                                    <Input {...form.register(`corporateEmails.${idx}` as const)} />
+                                    <Input
+                                        value={email}
+                                        onChange={(e) => handleArrayChange('corporateEmails', idx, e.target.value)}
+                                    />
                                     <Button
                                         type="button"
                                         variant="ghost"
-                                        onClick={() => corporateEmailsArray.remove(idx)}
+                                        onClick={() => removeArrayItem('corporateEmails', idx)}
                                     >
                                         <Trash2 className="text-red-500 w-4 h-4" />
                                     </Button>
@@ -275,7 +275,10 @@ const MainDetails = () => {
 
                             {LANGUAGES.map((l) => (
                                 <TabsContent key={l.key} value={l.key}>
-                                    <Input {...form.register(`workingHours.${l.key}` as const)} />
+                                    <Input
+                                        value={formData.workingHours[l.key]}
+                                        onChange={(e) => handleWorkingHoursChange(l.key, e.target.value)}
+                                    />
                                 </TabsContent>
                             ))}
                         </Tabs>
