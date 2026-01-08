@@ -64,11 +64,11 @@ const MainDetails = () => {
             return api.patch('/details', data)
         },
         onSuccess: () => {
-            toastSuccess('Details updated successfully')
+            toastSuccess(t('Details updated successfully'))
             queryClient.invalidateQueries({ queryKey: ['details'] })
         },
         onError: () => {
-            toastError('Failed to update details')
+            toastError(t('Failed to update details'))
         }
     })
 
