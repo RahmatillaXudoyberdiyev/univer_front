@@ -25,11 +25,7 @@ const Header = () => {
       items: { default: '/' },
       hasSubMenu: false,
     },
-    {
-      title: t('Kalkulyator'),
-      items: { default: '/calc' },
-      hasSubMenu: false,
-    },
+
 
     ...(menus.data?.map((menu: any) => ({
       title: menu.name?.[locale] || menu.name?.uz || t('Nomalum'),
@@ -49,7 +45,12 @@ const Header = () => {
       },
     })) || []),
     {
-      title: t('Galereya'),
+      title: t('Kalkulyator'),
+      items: { default: '/calc' },
+      hasSubMenu: false,
+    },
+    {
+      title: t('Matbuot'),
       items: {
         default: '',
         Foto: '/galereya/rasmlar',
