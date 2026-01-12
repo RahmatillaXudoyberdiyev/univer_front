@@ -6,6 +6,9 @@ import { ChevronDown } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
+import { LanguageSwitcher } from '../language-switcher/language-switcher'
+import { ModeToggle } from '../mode-toggle/mode-toggle'
+import { SidebarTrigger } from '../ui/sidebar'
 
 const Header = () => {
   const [activeMenu, setActiveMenu] = useState<number | null>(null)
@@ -25,7 +28,6 @@ const Header = () => {
       items: { default: '/' },
       hasSubMenu: false,
     },
-
 
     ...(menus.data?.map((menu: any) => ({
       title: menu.name?.[locale] || menu.name?.uz || t('Nomalum'),
@@ -146,6 +148,14 @@ const Header = () => {
             )
           })}
         </ul>
+
+        <div className="md:hidden px-3 py-2 flex justify-between items-center">
+          <SidebarTrigger />
+          <div>
+            <LanguageSwitcher />
+            <ModeToggle />
+          </div>
+        </div>
       </div>
     </div>
   )

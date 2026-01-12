@@ -1,16 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { api, baseBackendUrl } from '@/models/axios'
+import { api } from '@/models/axios'
 import { useQuery } from '@tanstack/react-query'
-import { Calendar } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import Image from 'next/image'
-import Link from 'next/link'
 import 'swiper/css'
-import { A11y, Autoplay } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import placeholderImage from '../../../public/image.png'
 
 const HeroSection = () => {
   const locale = useLocale()
@@ -40,11 +33,11 @@ const HeroSection = () => {
   }
 
   return (
-    <div className="mb-5">
-      <div className="w-full h-screen mb-10">
+    <div className="mb-5 container-cs">
+      <div className="flex justify-center items-center my-10 ">
         <video
           src="/logo_video.mp4"
-          className="h-full w-full object-cover"
+          className=" w-full h-50 md:h-75 lg:h-100 xl:h-150 object-cover"
           autoPlay
           muted
           loop

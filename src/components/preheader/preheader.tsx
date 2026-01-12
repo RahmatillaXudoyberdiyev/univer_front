@@ -60,7 +60,8 @@ const Preheader = () => {
                 >
                     <h1 className="flex justify-center items-center gap-2 cursor-pointer hover:text-primary transition-colors">
                         <MapPin size={16} />
-                        Samarqand shahri, Ko‘ksaroy maydoni, 1-uy
+                        <span className='md:hidden xl:block'>Samarqand shahri, Ko‘ksaroy maydoni, 1-uy</span>
+                        <span className='hidden md:block xl:hidden'>Manzil</span>
                     </h1>
 
                     <AnimatePresence>
@@ -86,7 +87,7 @@ const Preheader = () => {
                         )}
                     </AnimatePresence>
                 </div>
-                <h1 className="flex justify-center items-center gap-2">
+                <h1 className="flex justify-center items-center gap-2 md:hidden lg:flex">
                     <Mail size={16} /> {detailsData.data?.infoEmails}
                 </h1>
                 <div className="flex gap-2">
