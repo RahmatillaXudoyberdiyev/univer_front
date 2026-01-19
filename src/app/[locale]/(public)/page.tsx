@@ -30,7 +30,7 @@ export default function Home() {
             <NewsSection />
             <StatisticsSection />
             <Announcements />
-            <RegionalSection />
+            {/* <RegionalSection /> */}
             <Events />
             <UsefulLinks />
         </div>

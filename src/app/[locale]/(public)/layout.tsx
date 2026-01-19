@@ -15,7 +15,7 @@ export default function PublicLayout({
 }>) {
     return (
         <Providers>
-            <SnowAnimation />
+            {/* <SnowAnimation /> */}
             <Preheader />
             <Header />
             {children}
