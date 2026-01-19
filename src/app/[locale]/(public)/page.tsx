@@ -15,9 +15,9 @@ export async function generateMetadata({
     const { locale } = await params
     const t = await getTranslations({ locale })
 
-    const title = t('Bosh sahifa')
+    const title = t('Samarqand viloyati Investitsiyalar sanoat va savdo boshqarmasi')
     const description = t(
-        'Samarqand viloyati Investitsiyalar sanoat va savdo boshqarmasi'
+        'Samarqand viloyatida investitsiyalarni jalb qilish, sanoatni rivojlantirish va savdo faoliyatini qo‘llab-quvvatlash — Saminvest Company rasmiy portali'
     )
     const keywords = [
         'samarqand invest kompaniyasi',
@@ -28,14 +28,31 @@ export async function generateMetadata({
         'инвестиционная компания Самарканд',
         'Саминвест компанияси',
         'Samarkand investment company',
+        'Samarqand industrial zones',
+        'Samarqand free economic zones',
+        'Samarqand business support',
+        'Samarqand trade and industry',
+        'Samarqand investment projects',
+        'Samarqand youth entrepreneurship',
+        'Samarqand small industrial zones',
+        'Samarqand foreign investments',
+        'Samarqand statistics',
+        'Samarqand announcements',
+        'Samarqand events',
     ]
+
+    const canonicalBase = 'https://saminvestcompany.uz'
+    const canonicalUrl = locale === 'uz' ? canonicalBase : `${canonicalBase}/${locale}`
 
     return {
         title,
         description,
         keywords,
+        authors: [{ name: 'Samarqand Viloyati Investitsiya, Sanoat va Savdo Boshqarmasi' }],
+        creator: 'Saminvest Company',
+        publisher: 'Samarqand Regional Administration',
         alternates: {
-            canonical: `https://saminvestcompany.uz/${locale}`,
+            canonical: canonicalUrl,
             languages: {
                 uz: 'https://saminvestcompany.uz/uz',
                 ru: 'https://saminvestcompany.uz/ru',
@@ -45,15 +62,34 @@ export async function generateMetadata({
         openGraph: {
             title,
             description,
-            url: `https://saminvestcompany.uz/${locale}`,
-            siteName: 'Saminvest Company',
+            url: canonicalUrl,
+            siteName: 'Saminvest Company — Samarqand Investment Portal',
             locale,
             type: 'website',
+            images: [
+                {
+                    url: 'https://saminvestcompany.uz/og-image.jpg',
+                    width: 1200,
+                    height: 630,
+                    alt: 'Saminvest Company — Samarqand Investment, Industry and Trade Department',
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: ['https://saminvestcompany.uz/og-image.jpg'],
         },
         robots: {
             index: true,
             follow: true,
+            googleBot: 'index, follow',
         },
+        formatDetection: {
+            telephone: false,
+        },
+        metadataBase: new URL('https://saminvestcompany.uz'),
     }
 }
 
